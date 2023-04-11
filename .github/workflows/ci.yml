@@ -11,8 +11,8 @@ jobs:
       matrix:
         python-version: [3.8]
     env:
-      AZURE_CONTAINER_NAME = ${{ secrets.AZURE_CONTAINER_NAME }}
-      AZURE_CONNECTION_STRING = ${{ secrets.AZURE_CONNECTION_STRING }}
+      AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
+      AZURE_CONNECTION_STRING: ${{ secrets.AZURE_CONNECTION_STRING }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
