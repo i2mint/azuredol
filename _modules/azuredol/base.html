@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.base &mdash; azuredol 0.0.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>azuredol.base &mdash; azuredol 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -44,6 +44,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol.html">azuredol</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/base.html">azuredol.base</a></li>
 </ul>
 
@@ -79,37 +80,74 @@
 
 
 <div class="viewcode-block" id="AzureBlobPersisterMixin"><a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureBlobPersisterMixin">[docs]</a><span class="k">class</span> <span class="nc">AzureBlobPersisterMixin</span><span class="p">(</span><span class="n">KvPersister</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Key-Value mapping for creating, updating, and deleting Azure storage blob data&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create appendable blob and set value</span>
+
+<span class="sd">        :param k: key</span>
+<span class="sd">        :param v: blob data</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
         <span class="n">blob_client</span><span class="o">.</span><span class="n">create_append_blob</span><span class="p">()</span>
         <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="AzureBlobPersisterMixin.append"><a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureBlobPersisterMixin.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append to existing block</span>
+
+<span class="sd">        :param k: key</span>
+<span class="sd">        :param v: blob data</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-        <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></div>
 
     <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete blob</span>
+
+<span class="sd">        :param k: key</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
         <span class="n">blob_client</span><span class="o">.</span><span class="n">delete_blob</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="AzureBlobReaderMixin"><a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureBlobReaderMixin">[docs]</a><span class="k">class</span> <span class="nc">AzureBlobReaderMixin</span><span class="p">(</span><span class="n">KvReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Key-Value mapping for accessing and reading Azure storage blob data&quot;&quot;&quot;</span>
+
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">container_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_container_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">container_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download and return blob data</span>
+
+<span class="sd">        :param k: key</span>
+<span class="sd">        :return: blob data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
         <span class="n">blob_data</span> <span class="o">=</span> <span class="n">blob_client</span><span class="o">.</span><span class="n">download_blob</span><span class="p">()</span><span class="o">.</span><span class="n">readall</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">blob_data</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate blob keys</span>
+
+<span class="sd">        :return: Generator of blob keys</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blob_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_client</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blob_iter</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AzureBlobStore"><a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureBlobStore">[docs]</a><span class="k">class</span> <span class="nc">AzureBlobStore</span><span class="p">(</span><span class="n">AzureBlobReaderMixin</span><span class="p">,</span> <span class="n">AzureBlobPersisterMixin</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="AzureBlobStore"><a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureBlobStore">[docs]</a><span class="k">class</span> <span class="nc">AzureBlobStore</span><span class="p">(</span><span class="n">AzureBlobReaderMixin</span><span class="p">,</span> <span class="n">AzureBlobPersisterMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Azure storage blob data key-value mapping for creating, reading, updating, and deleting&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect to Azure storate blob service client to create and access appendable blob data</span>
+
+<span class="sd">        :param container_name: unique identifier used to distinguish container instances</span>
+<span class="sd">        :param connection_string: authorization info to access data in an Azure Storage account</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span> <span class="o">=</span> <span class="n">container_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">BlobServiceClient</span><span class="o">.</span><span class="n">from_connection_string</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span></div>

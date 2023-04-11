@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.base &mdash; azuredol 0.0.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>azuredol.base &mdash; azuredol 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -22,7 +22,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="Welcome to AzureDOL’s documentation!" href="../../index.html" /> 
+    <link rel="prev" title="azuredol" href="../azuredol.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,6 +46,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../azuredol.html">azuredol</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">azuredol.base</a></li>
 </ul>
 
@@ -79,17 +80,37 @@
 <dl class="py class">
 <dt id="azuredol.base.AzureBlobPersisterMixin">
 <em class="property">class </em><code class="sig-prename descclassname">azuredol.base.</code><code class="sig-name descname">AzureBlobPersisterMixin</code><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobPersisterMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobPersisterMixin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Key-Value mapping for creating, updating, and deleting Azure storage blob data</p>
+<dl class="py method">
+<dt id="azuredol.base.AzureBlobPersisterMixin.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobPersisterMixin.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobPersisterMixin.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append to existing block</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> – key</p></li>
+<li><p><strong>v</strong> – blob data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt id="azuredol.base.AzureBlobReaderMixin">
 <em class="property">class </em><code class="sig-prename descclassname">azuredol.base.</code><code class="sig-name descname">AzureBlobReaderMixin</code><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobReaderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobReaderMixin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Key-Value mapping for accessing and reading Azure storage blob data</p>
+</dd></dl>
 
 <dl class="py class">
 <dt id="azuredol.base.AzureBlobStore">
 <em class="property">class </em><code class="sig-prename descclassname">azuredol.base.</code><code class="sig-name descname">AzureBlobStore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">container_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">connection_string</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobStore" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Azure storage blob data key-value mapping for creating, reading, updating, and deleting</p>
+</dd></dl>
 
 </section>
 
@@ -97,7 +118,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../../index.html" class="btn btn-neutral float-left" title="Welcome to AzureDOL’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../azuredol.html" class="btn btn-neutral float-left" title="azuredol" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

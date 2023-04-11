@@ -2,4 +2,5 @@
    :maxdepth: 2
    :caption: Contents:
 
+   module_docs/azuredol
    module_docs/azuredol/base
