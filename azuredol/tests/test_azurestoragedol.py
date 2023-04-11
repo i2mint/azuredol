@@ -8,9 +8,10 @@ from py2store import QuickBinaryStore
 
 from azuredol.base import AzureBlobStore
 
+tests_dir = os.path.dirname(os.path.realpath(__file__))
 
-input_store = ConfigStore('./input.ini')
-file_store = QuickBinaryStore('./files')
+input_store = ConfigStore(os.path.join(tests_dir, 'input.ini'))
+file_store = QuickBinaryStore(os.path.join(tests_dir, 'files'))
 
 Azurestore = AzureBlobStore(
     container_name=os.environ['AZURE_CONTAINER_NAME'],
