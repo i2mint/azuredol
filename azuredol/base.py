@@ -1,6 +1,7 @@
+"""Azure Storage Data Object Layer"""
+from functools import cached_property
 from azure.storage.blob import BlobServiceClient
 from py2store import KvReader, KvPersister
-from functools import cached_property
 
 
 class AzureBlobPersisterMixin(KvPersister):
