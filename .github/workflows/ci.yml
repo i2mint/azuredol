@@ -10,9 +10,6 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-    env:
-      AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
-      AZURE_CONNECTION_STRING: ${{ secrets.AZURE_CONNECTION_STRING }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
@@ -35,6 +32,9 @@ jobs:
         run: pylint ./$PROJECT_NAME --ignore=tests,examples,scrap --disable=all --enable=C0114
 
       - name: Test
+        env:
+          AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
+          AZURE_CONNECTION_STRING: ${{ secrets.AZURE_CONNECTION_STRING }}
         run: pytest --doctest-modules --ignore=scrap -v $PROJECT_NAME
   publish:
     name: Publish
