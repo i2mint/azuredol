@@ -30,11 +30,18 @@ jobs:
 
       - name: Validate docstrings
         run: pylint ./$PROJECT_NAME --ignore=tests,examples,scrap --disable=all --enable=C0114
+        
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.5.1
+
+      - name: Install & run Azurite
+        run: npm install -g azurite
+
+      - name: Run Azurite in Background
+        shell: bash
+        run: azurite-blob &
 
       - name: Test
-        env:
-          AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
-          AZURE_CONNECTION_STRING: ${{ secrets.AZURE_CONNECTION_STRING }}
         run: pytest --doctest-modules --ignore=scrap -v $PROJECT_NAME
   publish:
     name: Publish
