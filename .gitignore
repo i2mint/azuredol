@@ -132,5 +132,7 @@ dmypy.json
 # IDE
 .idea
 
-# azurite files
+# Azurite
 __azurite*
+__blobstorage__/
+__queuestorage__/
