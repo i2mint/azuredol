@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from azure.storage.blob import ContainerClient
 from dol import KvReader, KvPersister
 
+AZURE_STORAGE_BLOCK_SIZE_LIMIT = 4 * 1024 * 1024  # 4MB
+
 
 class AzureBlobPersisterMixin(KvPersister):
     """Key-Value mapping for creating, updating, and deleting Azure storage blob data"""
@@ -16,7 +18,10 @@ class AzureBlobPersisterMixin(KvPersister):
         """
         blob_client = self._container_client.get_blob_client(blob=self._id_of_key(k))
         blob_client.create_append_blob()
-        blob_client.append_block(v, length=len(v))
+        if v:
+            v_bytes = v.encode() if isinstance(v, str) else bytes(v)
+            for i in range(0, len(v_bytes), AZURE_STORAGE_BLOCK_SIZE_LIMIT):
+                blob_client.append_block(v_bytes[i : i + AZURE_STORAGE_BLOCK_SIZE_LIMIT])
 
     # TODO: Would be nice to have store[k].append(v) instead of this. The hard part is
     # that we don't want to download the blob when calling store[k] in this case.
@@ -75,7 +80,7 @@ class AzureBlobStore(AzureBlobReaderMixin, AzureBlobPersisterMixin):
     emulator installed and running.
 
     >>> connection_string='DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;'
-    >>> container_name='sample-container'
+    >>> container_name='azuredol-container'
 
     We create a store instance with a path as a prefix to all keys:
 
