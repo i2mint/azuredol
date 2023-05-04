@@ -21,7 +21,9 @@ class AzureBlobPersisterMixin(KvPersister):
         if v:
             v_bytes = v.encode() if isinstance(v, str) else bytes(v)
             for i in range(0, len(v_bytes), AZURE_STORAGE_BLOCK_SIZE_LIMIT):
-                blob_client.append_block(v_bytes[i : i + AZURE_STORAGE_BLOCK_SIZE_LIMIT])
+                blob_client.append_block(
+                    v_bytes[i : i + AZURE_STORAGE_BLOCK_SIZE_LIMIT]
+                )
 
     # TODO: Would be nice to have store[k].append(v) instead of this. The hard part is
     # that we don't want to download the blob when calling store[k] in this case.
@@ -163,6 +165,7 @@ class AzureBlobStore(AzureBlobReaderMixin, AzureBlobPersisterMixin):
     ...     del store_all[k]
     
     """
+
     connection_string: str
     container_name: str
     create_container_if_missing: bool = True
@@ -172,8 +175,7 @@ class AzureBlobStore(AzureBlobReaderMixin, AzureBlobPersisterMixin):
         """Connect to Azure storate blob service client to create and access appendable 
         blob data"""
         self._container_client = ContainerClient.from_connection_string(
-            self.connection_string,
-            self.container_name
+            self.connection_string, self.container_name
         )
         if not self._container_client.exists():
             if self.create_container_if_missing:
@@ -186,4 +188,4 @@ class AzureBlobStore(AzureBlobReaderMixin, AzureBlobPersisterMixin):
         return f'{self.path}{k}'
 
     def _key_of_id(self, id):
-        return id[len(self.path):]
+        return id[len(self.path) :]
