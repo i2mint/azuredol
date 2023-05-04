@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.base &mdash; azuredol 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>azuredol.base &mdash; azuredol 0.1.3 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -96,7 +96,9 @@
         <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
             <span class="n">v_bytes</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_bytes</span><span class="p">),</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">):</span>
-                <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">v_bytes</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">])</span>
+                <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span>
+                    <span class="n">v_bytes</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">]</span>
+                <span class="p">)</span>
 
     <span class="c1"># TODO: Would be nice to have store[k].append(v) instead of this. The hard part is</span>
     <span class="c1"># that we don&#39;t want to download the blob when calling store[k] in this case.</span>
@@ -238,6 +240,7 @@
 <span class="sd">    ...     del store_all[k]</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">connection_string</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">container_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">create_container_if_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -247,8 +250,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect to Azure storate blob service client to create and access appendable </span>
 <span class="sd">        blob data&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span> <span class="o">=</span> <span class="n">ContainerClient</span><span class="o">.</span><span class="n">from_connection_string</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">connection_string</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connection_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_container_if_missing</span><span class="p">:</span>
@@ -261,7 +263,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span>
 
     <span class="k">def</span> <span class="nf">_key_of_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">id</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):]</span></div>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="p">:]</span></div>
 </pre></div>
 
            </div>
