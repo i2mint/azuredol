@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.base &mdash; azuredol 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>azuredol.base &mdash; azuredol 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -81,6 +81,14 @@
 <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># 4MB</span>
 
 
+<span class="k">def</span> <span class="nf">_append_block</span><span class="p">(</span><span class="n">blob_client</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+            <span class="n">v_bytes</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_bytes</span><span class="p">),</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">):</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="n">v_bytes</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">]</span>
+                <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
+
+
 <div class="viewcode-block" id="AzureBlobPersisterMixin"><a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureBlobPersisterMixin">[docs]</a><span class="k">class</span> <span class="nc">AzureBlobPersisterMixin</span><span class="p">(</span><span class="n">KvPersister</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Key-Value mapping for creating, updating, and deleting Azure storage blob data&quot;&quot;&quot;</span>
 
@@ -93,12 +101,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
         <span class="n">blob_client</span><span class="o">.</span><span class="n">create_append_blob</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
-            <span class="n">v_bytes</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_bytes</span><span class="p">),</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">):</span>
-                <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span>
-                    <span class="n">v_bytes</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">]</span>
-                <span class="p">)</span>
+        <span class="n">_append_block</span><span class="p">(</span><span class="n">blob_client</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="c1"># TODO: Would be nice to have store[k].append(v) instead of this. The hard part is</span>
     <span class="c1"># that we don&#39;t want to download the blob when calling store[k] in this case.</span>
@@ -110,7 +113,9 @@
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
-        <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">blob_client</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">_append_block</span><span class="p">(</span><span class="n">blob_client</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete blob</span>
