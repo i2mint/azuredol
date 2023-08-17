@@ -7,11 +7,11 @@ AZURE_STORAGE_BLOCK_SIZE_LIMIT = 4 * 1024 * 1024  # 4MB
 
 
 def _append_block(blob_client, v):
-        if v:
-            v_bytes = v.encode() if isinstance(v, str) else bytes(v)
-            for i in range(0, len(v_bytes), AZURE_STORAGE_BLOCK_SIZE_LIMIT):
-                block = v_bytes[i : i + AZURE_STORAGE_BLOCK_SIZE_LIMIT]
-                blob_client.append_block(block, length=len(block))
+    if v:
+        v_bytes = v.encode() if isinstance(v, str) else bytes(v)
+        for i in range(0, len(v_bytes), AZURE_STORAGE_BLOCK_SIZE_LIMIT):
+            block = v_bytes[i : i + AZURE_STORAGE_BLOCK_SIZE_LIMIT]
+            blob_client.append_block(block, length=len(block))
 
 
 class AzureBlobPersisterMixin(KvPersister):
