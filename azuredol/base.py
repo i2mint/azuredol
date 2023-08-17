@@ -6,6 +6,14 @@ from dol import KvReader, KvPersister
 AZURE_STORAGE_BLOCK_SIZE_LIMIT = 4 * 1024 * 1024  # 4MB
 
 
+def _append_block(blob_client, v):
+        if v:
+            v_bytes = v.encode() if isinstance(v, str) else bytes(v)
+            for i in range(0, len(v_bytes), AZURE_STORAGE_BLOCK_SIZE_LIMIT):
+                block = v_bytes[i : i + AZURE_STORAGE_BLOCK_SIZE_LIMIT]
+                blob_client.append_block(block, length=len(block))
+
+
 class AzureBlobPersisterMixin(KvPersister):
     """Key-Value mapping for creating, updating, and deleting Azure storage blob data"""
 
@@ -18,12 +26,7 @@ class AzureBlobPersisterMixin(KvPersister):
         """
         blob_client = self._container_client.get_blob_client(blob=self._id_of_key(k))
         blob_client.create_append_blob()
-        if v:
-            v_bytes = v.encode() if isinstance(v, str) else bytes(v)
-            for i in range(0, len(v_bytes), AZURE_STORAGE_BLOCK_SIZE_LIMIT):
-                blob_client.append_block(
-                    v_bytes[i : i + AZURE_STORAGE_BLOCK_SIZE_LIMIT]
-                )
+        _append_block(blob_client, v)
 
     # TODO: Would be nice to have store[k].append(v) instead of this. The hard part is
     # that we don't want to download the blob when calling store[k] in this case.
@@ -35,7 +38,9 @@ class AzureBlobPersisterMixin(KvPersister):
         :return: None
         """
         blob_client = self._container_client.get_blob_client(blob=self._id_of_key(k))
-        blob_client.append_block(v, length=len(v))
+        if not blob_client.exists():
+            raise KeyError(k)
+        _append_block(blob_client, v)
 
     def __delitem__(self, k):
         """Delete blob
