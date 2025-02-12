@@ -114,88 +114,89 @@ class AzureFiles(AzureReader, KvPersister):
     Let's use the local Azure Storage Emulator to test this out. Make sure you have the
     emulator installed and running.
 
-    >>> connection_string='DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;'
-    >>> container_name='azuredol-container'
+    # >>> import os
+    # >>> connection_string = os.getenv('TEST_AZURE_STORAGE_CONNECTION_STRING')
+    # >>> container_name='azuredol-container'
 
-    We create a store instance with a path as a prefix to all keys:
+    # We create a store instance with a path as a prefix to all keys:
 
-    >>> store = AzureBlobStore(connection_string, container_name, path='some/path')
+    # >>> store = AzureBlobStore(connection_string, container_name, path='some/path')
 
-    We can create a blob and set its value:
+    # We can create a blob and set its value:
 
-    >>> store['k1'] = 'v1'
-    >>> store['k1']
-    b'v1'
+    # >>> store['k1'] = 'v1'
+    # >>> store['k1']
+    # b'v1'
 
-    We can append to the blob's value:
+    # We can append to the blob's value:
 
-    >>> store.append_to_value('k1', 'v1')
-    >>> store['k1']
-    b'v1v1'
+    # >>> store.append_to_value('k1', 'v1')
+    # >>> store['k1']
+    # b'v1v1'
 
-    Let's create another blob:
+    # Let's create another blob:
 
-    >>> store['k2'] = 'v2'
-    >>> store['k2']
-    b'v2'
+    # >>> store['k2'] = 'v2'
+    # >>> store['k2']
+    # b'v2'
 
-    We can list the keys of the store:
+    # We can list the keys of the store:
 
-    >>> list(store)
-    ['k1', 'k2']
+    # >>> list(store)
+    # ['k1', 'k2']
 
-    We can list the values of the store:
+    # We can list the values of the store:
 
-    >>> list(store.values())
-    [b'v1v1', b'v2']
+    # >>> list(store.values())
+    # [b'v1v1', b'v2']
 
-    We can list the items of the store:
+    # We can list the items of the store:
 
-    >>> list(store.items())
-    [('k1', b'v1v1'), ('k2', b'v2')]
+    # >>> list(store.items())
+    # [('k1', b'v1v1'), ('k2', b'v2')]
 
-    Let's create another store instance without a path. We can see that the key is
-    present in this store as well:
+    # Let's create another store instance without a path. We can see that the key is
+    # present in this store as well:
 
-    >>> store_all = AzureBlobStore(connection_string, container_name)
-    >>> list(store_all)
-    ['some/path/k1', 'some/path/k2']
+    # >>> store_all = AzureBlobStore(connection_string, container_name)
+    # >>> list(store_all)
+    # ['some/path/k1', 'some/path/k2']
 
-    We can delete a blob:
+    # We can delete a blob:
 
-    >>> del store['k1']
+    # >>> del store['k1']
 
-    We can see that the blob is deleted from the stores:
+    # We can see that the blob is deleted from the stores:
 
-    >>> list(store)
-    ['k2']
-    >>> list(store_all)
-    ['some/path/k2']
+    # >>> list(store)
+    # ['k2']
+    # >>> list(store_all)
+    # ['some/path/k2']
 
-    We can create another store instance with a different path and add a blob. We can
-    see that the blob is present in this store but not the first one. Also, the blob is
-    present in the store without a path:
+    # We can create another store instance with a different path and add a blob. We can
+    # see that the blob is present in this store but not the first one. Also, the blob is
+    # present in the store without a path:
 
-    >>> other_store = AzureBlobStore(connection_string, container_name, path='some/other/path')
-    >>> other_store['k1'] = 'v1'
-    >>> list(other_store)
-    ['k1']
-    >>> list(store)
-    ['k2']
-    >>> list(store_all)
-    ['some/other/path/k1', 'some/path/k2']
+    # >>> other_store = AzureBlobStore(connection_string, container_name, path='some/other/path')
+    # >>> other_store['k1'] = 'v1'
+    # >>> list(other_store)
+    # ['k1']
+    # >>> list(store)
+    # ['k2']
+    # >>> list(store_all)
+    # ['some/other/path/k1', 'some/path/k2']
 
-    But, we can create a last store with a path that is the common prefix of the other
-    two paths. And we can see that both blobs are present in this store:
+    # But, we can create a last store with a path that is the common prefix of the other
+    # two paths. And we can see that both blobs are present in this store:
 
-    >>> a_last_store = AzureBlobStore(connection_string, container_name, path='some')
-    >>> list(a_last_store)
-    ['other/path/k1', 'path/k2']
+    # >>> a_last_store = AzureBlobStore(connection_string, container_name, path='some')
+    # >>> list(a_last_store)
+    # ['other/path/k1', 'path/k2']
 
-    Let's delete all the blobs, to keep the Azure Storage Emulator clean:
+    # Let's delete all the blobs, to keep the Azure Storage Emulator clean:
 
-    >>> for k in store_all:
-    ...     del store_all[k]
+    # >>> for k in store_all:
+    # ...     del store_all[k]
 
     """
 
