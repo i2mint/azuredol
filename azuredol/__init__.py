@@ -6,4 +6,6 @@ from azuredol.base import (
     AzureTextFiles,
 )
 
+from azuredol.functions import azure_func_service
+
 from azuredol._old_base import AzureBlobStore  # deprecated
