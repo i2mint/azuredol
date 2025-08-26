@@ -1,0 +1,4 @@
+azuredol.functions
+==================
+.. automodule:: azuredol.functions
+   :members:

@@ -1,28 +1,31 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.base &mdash; azuredol 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/toggleprompt.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+  <title>azuredol.base &mdash; azuredol 0.1.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="azuredol" href="../azuredol.html" /> 
+    <link rel="next" title="azuredol.functions" href="functions.html" />
+    <link rel="prev" title="azuredol._old_base" href="_old_base.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,10 +47,20 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../azuredol.html">azuredol</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">azuredol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_old_base.html">azuredol._old_base</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">azuredol.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AzureFiles"><code class="docutils literal notranslate"><span class="pre">AzureFiles</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.AzureFiles.append_to_value"><code class="docutils literal notranslate"><span class="pre">AzureFiles.append_to_value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AzureReader"><code class="docutils literal notranslate"><span class="pre">AzureReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AzureTextFiles"><code class="docutils literal notranslate"><span class="pre">AzureTextFiles</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">azuredol.functions</a></li>
 </ul>
 
         </div>
@@ -75,44 +88,15 @@
            <div itemprop="articleBody">
              
   <section id="module-azuredol.base">
-<span id="azuredol-base"></span><h1>azuredol.base<a class="headerlink" href="#module-azuredol.base" title="Permalink to this headline">¶</a></h1>
+<span id="azuredol-base"></span><h1>azuredol.base<a class="headerlink" href="#module-azuredol.base" title="Link to this heading"></a></h1>
 <p>Azure Storage Data Object Layer</p>
 <dl class="py class">
-<dt id="azuredol.base.AzureBlobPersisterMixin">
-<em class="property">class </em><code class="sig-prename descclassname">azuredol.base.</code><code class="sig-name descname">AzureBlobPersisterMixin</code><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobPersisterMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobPersisterMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Key-Value mapping for creating, updating, and deleting Azure storage blob data</p>
-<dl class="py method">
-<dt id="azuredol.base.AzureBlobPersisterMixin.append_to_value">
-<code class="sig-name descname">append_to_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobPersisterMixin.append_to_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobPersisterMixin.append_to_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append to existing block</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> – key</p></li>
-<li><p><strong>v</strong> – blob data</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="azuredol.base.AzureBlobReaderMixin">
-<em class="property">class </em><code class="sig-prename descclassname">azuredol.base.</code><code class="sig-name descname">AzureBlobReaderMixin</code><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobReaderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobReaderMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Key-Value mapping for accessing and reading Azure storage blob data</p>
-</dd></dl>
-
-<dl class="py class">
-<dt id="azuredol.base.AzureBlobStore">
-<em class="property">class </em><code class="sig-prename descclassname">azuredol.base.</code><code class="sig-name descname">AzureBlobStore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">connection_string</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">container_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">create_container_if_missing</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureBlobStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#azuredol.base.AzureBlobStore" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="azuredol.base.AzureFiles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AzureFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureFiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AzureFiles" title="Link to this definition"></a></dt>
 <dd><p>Azure storage blob data key-value mapping for creating, reading, updating, and
 deleting</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>container_name</strong> – unique identifier used to distinguish container instances</p></li>
 <li><p><strong>connection_string</strong> – authorization info to access data in an Azure Storage</p></li>
@@ -122,90 +106,92 @@ deleting</p>
 <p>account</p>
 <p>Let’s use the local Azure Storage Emulator to test this out. Make sure you have the
 emulator installed and running.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">connection_string</span><span class="o">=</span><span class="s1">&#39;DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">container_name</span><span class="o">=</span><span class="s1">&#39;azuredol-container&#39;</span>
-</pre></div>
-</div>
-<p>We create a store instance with a path as a prefix to all keys:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">AzureBlobStore</span><span class="p">(</span><span class="n">connection_string</span><span class="p">,</span> <span class="n">container_name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;some/path&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>We can create a blob and set its value:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;v1&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span>
-<span class="go">b&#39;v1&#39;</span>
-</pre></div>
-</div>
-<p>We can append to the blob’s value:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">append_to_value</span><span class="p">(</span><span class="s1">&#39;k1&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span>
-<span class="go">b&#39;v1v1&#39;</span>
-</pre></div>
-</div>
-<p>Let’s create another blob:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;k2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;v2&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;k2&#39;</span><span class="p">]</span>
-<span class="go">b&#39;v2&#39;</span>
-</pre></div>
-</div>
-<p>We can list the keys of the store:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="go">[&#39;k1&#39;, &#39;k2&#39;]</span>
-</pre></div>
-</div>
-<p>We can list the values of the store:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-<span class="go">[b&#39;v1v1&#39;, b&#39;v2&#39;]</span>
-</pre></div>
-</div>
-<p>We can list the items of the store:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-<span class="go">[(&#39;k1&#39;, b&#39;v1v1&#39;), (&#39;k2&#39;, b&#39;v2&#39;)]</span>
-</pre></div>
-</div>
-<p>Let’s create another store instance without a path. We can see that the key is
-present in this store as well:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store_all</span> <span class="o">=</span> <span class="n">AzureBlobStore</span><span class="p">(</span><span class="n">connection_string</span><span class="p">,</span> <span class="n">container_name</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store_all</span><span class="p">)</span>
-<span class="go">[&#39;some/path/k1&#39;, &#39;some/path/k2&#39;]</span>
-</pre></div>
-</div>
-<p>We can delete a blob:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>We can see that the blob is deleted from the stores:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="go">[&#39;k2&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store_all</span><span class="p">)</span>
-<span class="go">[&#39;some/path/k2&#39;]</span>
-</pre></div>
-</div>
-<p>We can create another store instance with a different path and add a blob. We can
-see that the blob is present in this store but not the first one. Also, the blob is
-present in the store without a path:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">other_store</span> <span class="o">=</span> <span class="n">AzureBlobStore</span><span class="p">(</span><span class="n">connection_string</span><span class="p">,</span> <span class="n">container_name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;some/other/path&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">other_store</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;v1&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">other_store</span><span class="p">)</span>
-<span class="go">[&#39;k1&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="go">[&#39;k2&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">store_all</span><span class="p">)</span>
-<span class="go">[&#39;some/other/path/k1&#39;, &#39;some/path/k2&#39;]</span>
-</pre></div>
-</div>
-<p>But, we can create a last store with a path that is the common prefix of the other
-two paths. And we can see that both blobs are present in this store:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a_last_store</span> <span class="o">=</span> <span class="n">AzureBlobStore</span><span class="p">(</span><span class="n">connection_string</span><span class="p">,</span> <span class="n">container_name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;some&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">a_last_store</span><span class="p">)</span>
-<span class="go">[&#39;other/path/k1&#39;, &#39;path/k2&#39;]</span>
-</pre></div>
-</div>
-<p>Let’s delete all the blobs, to keep the Azure Storage Emulator clean:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">store_all</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">del</span> <span class="n">store_all</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-</pre></div>
-</div>
+<p># &gt;&gt;&gt; import os
+# &gt;&gt;&gt; connection_string = os.getenv(‘TEST_AZURE_STORAGE_CONNECTION_STRING’)
+# &gt;&gt;&gt; container_name=’azuredol-container’</p>
+<p># We create a store instance with a path as a prefix to all keys:</p>
+<p># &gt;&gt;&gt; store = AzureBlobStore(connection_string, container_name, path=’some/path’)</p>
+<p># We can create a blob and set its value:</p>
+<p># &gt;&gt;&gt; store[‘k1’] = ‘v1’
+# &gt;&gt;&gt; store[‘k1’]
+# b’v1’</p>
+<p># We can append to the blob’s value:</p>
+<p># &gt;&gt;&gt; store.append_to_value(‘k1’, ‘v1’)
+# &gt;&gt;&gt; store[‘k1’]
+# b’v1v1’</p>
+<p># Let’s create another blob:</p>
+<p># &gt;&gt;&gt; store[‘k2’] = ‘v2’
+# &gt;&gt;&gt; store[‘k2’]
+# b’v2’</p>
+<p># We can list the keys of the store:</p>
+<p># &gt;&gt;&gt; list(store)
+# [‘k1’, ‘k2’]</p>
+<p># We can list the values of the store:</p>
+<p># &gt;&gt;&gt; list(store.values())
+# [b’v1v1’, b’v2’]</p>
+<p># We can list the items of the store:</p>
+<p># &gt;&gt;&gt; list(store.items())
+# [(‘k1’, b’v1v1’), (‘k2’, b’v2’)]</p>
+<p># Let’s create another store instance without a path. We can see that the key is
+# present in this store as well:</p>
+<p># &gt;&gt;&gt; store_all = AzureBlobStore(connection_string, container_name)
+# &gt;&gt;&gt; list(store_all)
+# [‘some/path/k1’, ‘some/path/k2’]</p>
+<p># We can delete a blob:</p>
+<p># &gt;&gt;&gt; del store[‘k1’]</p>
+<p># We can see that the blob is deleted from the stores:</p>
+<p># &gt;&gt;&gt; list(store)
+# [‘k2’]
+# &gt;&gt;&gt; list(store_all)
+# [‘some/path/k2’]</p>
+<p># We can create another store instance with a different path and add a blob. We can
+# see that the blob is present in this store but not the first one. Also, the blob is
+# present in the store without a path:</p>
+<p># &gt;&gt;&gt; other_store = AzureBlobStore(connection_string, container_name, path=’some/other/path’)
+# &gt;&gt;&gt; other_store[‘k1’] = ‘v1’
+# &gt;&gt;&gt; list(other_store)
+# [‘k1’]
+# &gt;&gt;&gt; list(store)
+# [‘k2’]
+# &gt;&gt;&gt; list(store_all)
+# [‘some/other/path/k1’, ‘some/path/k2’]</p>
+<p># But, we can create a last store with a path that is the common prefix of the other
+# two paths. And we can see that both blobs are present in this store:</p>
+<p># &gt;&gt;&gt; a_last_store = AzureBlobStore(connection_string, container_name, path=’some’)
+# &gt;&gt;&gt; list(a_last_store)
+# [‘other/path/k1’, ‘path/k2’]</p>
+<p># Let’s delete all the blobs, to keep the Azure Storage Emulator clean:</p>
+<p># &gt;&gt;&gt; for k in store_all:
+# …     del store_all[k]</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.AzureFiles.append_to_value">
+<span class="sig-name descname"><span class="pre">append_to_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureFiles.append_to_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AzureFiles.append_to_value" title="Link to this definition"></a></dt>
+<dd><p>Append to existing block</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> – key</p></li>
+<li><p><strong>v</strong> – blob data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.base.AzureReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AzureReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AzureReader" title="Link to this definition"></a></dt>
+<dd><p>Key-Value mapping for accessing and reading Azure storage blob data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azuredol.base.AzureTextFiles">
+<span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AzureTextFiles</span></span><a class="headerlink" href="#azuredol.base.AzureTextFiles" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#azuredol.base.AzureFiles" title="azuredol.base.AzureFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">AzureFiles</span></code></a></p>
 </dd></dl>
 
 </section>
@@ -214,7 +200,8 @@ two paths. And we can see that both blobs are present in this store:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../azuredol.html" class="btn btn-neutral float-left" title="azuredol" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_old_base.html" class="btn btn-neutral float-left" title="azuredol._old_base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="functions.html" class="btn btn-neutral float-right" title="azuredol.functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,0 +1,4 @@
+azuredol._old_base
+==================
+.. automodule:: azuredol._old_base
+   :members:

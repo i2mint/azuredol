@@ -3,4 +3,6 @@
    :caption: Contents:
 
    module_docs/azuredol
+   module_docs/azuredol/_old_base
    module_docs/azuredol/base
+   module_docs/azuredol/functions
