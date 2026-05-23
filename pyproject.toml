@@ -85,6 +85,9 @@ doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "ELLIPSIS",
 ]
+markers = [
+    "integration: tests requiring a live backend (Azurite via Docker). Skipped when unavailable.",
+]
 
 [tool.wads.ci]
 project_name = ""
