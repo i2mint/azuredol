@@ -6,26 +6,26 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.base &mdash; azuredol 0.1.6 documentation</title>
+  <title>azuredol.base &mdash; azuredol 0.1.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="azuredol.functions" href="functions.html" />
-    <link rel="prev" title="azuredol._old_base" href="_old_base.html" /> 
+    <link rel="next" title="azuredol.connection" href="connection.html" />
+    <link rel="prev" title="azuredol" href="../azuredol.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,17 +50,38 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../azuredol.html">azuredol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_old_base.html">azuredol._old_base</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">azuredol.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AzureFiles"><code class="docutils literal notranslate"><span class="pre">AzureFiles</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.AzureFiles.append_to_value"><code class="docutils literal notranslate"><span class="pre">AzureFiles.append_to_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AccountCollection"><code class="docutils literal notranslate"><span class="pre">AccountCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AccountReader"><code class="docutils literal notranslate"><span class="pre">AccountReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AccountStore"><code class="docutils literal notranslate"><span class="pre">AccountStore</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.AccountStore.delete"><code class="docutils literal notranslate"><span class="pre">AccountStore.delete()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AzureReader"><code class="docutils literal notranslate"><span class="pre">AzureReader</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.AzureTextFiles"><code class="docutils literal notranslate"><span class="pre">AzureTextFiles</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.BlobHandle"><code class="docutils literal notranslate"><span class="pre">BlobHandle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.acquire_lease"><code class="docutils literal notranslate"><span class="pre">BlobHandle.acquire_lease()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.append"><code class="docutils literal notranslate"><span class="pre">BlobHandle.append()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.copy_from"><code class="docutils literal notranslate"><span class="pre">BlobHandle.copy_from()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.create"><code class="docutils literal notranslate"><span class="pre">BlobHandle.create()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.download_stream"><code class="docutils literal notranslate"><span class="pre">BlobHandle.download_stream()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.properties"><code class="docutils literal notranslate"><span class="pre">BlobHandle.properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.read"><code class="docutils literal notranslate"><span class="pre">BlobHandle.read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.url"><code class="docutils literal notranslate"><span class="pre">BlobHandle.url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.BlobHandle.write"><code class="docutils literal notranslate"><span class="pre">BlobHandle.write()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.ContainerCollection"><code class="docutils literal notranslate"><span class="pre">ContainerCollection</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.base.ContainerCollection.walk"><code class="docutils literal notranslate"><span class="pre">ContainerCollection.walk()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.ContainerReader"><code class="docutils literal notranslate"><span class="pre">ContainerReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.base.ContainerStore"><code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="connection.html">azuredol.connection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">azuredol.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">azuredol.functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">azuredol.testing</a></li>
 </ul>
 
         </div>
@@ -89,109 +110,166 @@
              
   <section id="module-azuredol.base">
 <span id="azuredol-base"></span><h1>azuredol.base<a class="headerlink" href="#module-azuredol.base" title="Link to this heading"></a></h1>
-<p>Azure Storage Data Object Layer</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="azuredol.base.AzureFiles">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AzureFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureFiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AzureFiles" title="Link to this definition"></a></dt>
-<dd><p>Azure storage blob data key-value mapping for creating, reading, updating, and
-deleting</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>container_name</strong> – unique identifier used to distinguish container instances</p></li>
-<li><p><strong>connection_string</strong> – authorization info to access data in an Azure Storage</p></li>
+<p>Close-to-metal Mapping stores over Azure Blob Storage.</p>
+<p>Three concrete classes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code> — the primary store. Mapping of blob name → bytes within one container.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AccountStore</span></code> — mapping of container name → <code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code> within one account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BlobHandle</span></code>  — non-Mapping escape hatch for one blob with the full Azure surface.</p></li>
 </ul>
-</dd>
-</dl>
-<p>account</p>
-<p>Let’s use the local Azure Storage Emulator to test this out. Make sure you have the
-emulator installed and running.</p>
-<p># &gt;&gt;&gt; import os
-# &gt;&gt;&gt; connection_string = os.getenv(‘TEST_AZURE_STORAGE_CONNECTION_STRING’)
-# &gt;&gt;&gt; container_name=’azuredol-container’</p>
-<p># We create a store instance with a path as a prefix to all keys:</p>
-<p># &gt;&gt;&gt; store = AzureBlobStore(connection_string, container_name, path=’some/path’)</p>
-<p># We can create a blob and set its value:</p>
-<p># &gt;&gt;&gt; store[‘k1’] = ‘v1’
-# &gt;&gt;&gt; store[‘k1’]
-# b’v1’</p>
-<p># We can append to the blob’s value:</p>
-<p># &gt;&gt;&gt; store.append_to_value(‘k1’, ‘v1’)
-# &gt;&gt;&gt; store[‘k1’]
-# b’v1v1’</p>
-<p># Let’s create another blob:</p>
-<p># &gt;&gt;&gt; store[‘k2’] = ‘v2’
-# &gt;&gt;&gt; store[‘k2’]
-# b’v2’</p>
-<p># We can list the keys of the store:</p>
-<p># &gt;&gt;&gt; list(store)
-# [‘k1’, ‘k2’]</p>
-<p># We can list the values of the store:</p>
-<p># &gt;&gt;&gt; list(store.values())
-# [b’v1v1’, b’v2’]</p>
-<p># We can list the items of the store:</p>
-<p># &gt;&gt;&gt; list(store.items())
-# [(‘k1’, b’v1v1’), (‘k2’, b’v2’)]</p>
-<p># Let’s create another store instance without a path. We can see that the key is
-# present in this store as well:</p>
-<p># &gt;&gt;&gt; store_all = AzureBlobStore(connection_string, container_name)
-# &gt;&gt;&gt; list(store_all)
-# [‘some/path/k1’, ‘some/path/k2’]</p>
-<p># We can delete a blob:</p>
-<p># &gt;&gt;&gt; del store[‘k1’]</p>
-<p># We can see that the blob is deleted from the stores:</p>
-<p># &gt;&gt;&gt; list(store)
-# [‘k2’]
-# &gt;&gt;&gt; list(store_all)
-# [‘some/path/k2’]</p>
-<p># We can create another store instance with a different path and add a blob. We can
-# see that the blob is present in this store but not the first one. Also, the blob is
-# present in the store without a path:</p>
-<p># &gt;&gt;&gt; other_store = AzureBlobStore(connection_string, container_name, path=’some/other/path’)
-# &gt;&gt;&gt; other_store[‘k1’] = ‘v1’
-# &gt;&gt;&gt; list(other_store)
-# [‘k1’]
-# &gt;&gt;&gt; list(store)
-# [‘k2’]
-# &gt;&gt;&gt; list(store_all)
-# [‘some/other/path/k1’, ‘some/path/k2’]</p>
-<p># But, we can create a last store with a path that is the common prefix of the other
-# two paths. And we can see that both blobs are present in this store:</p>
-<p># &gt;&gt;&gt; a_last_store = AzureBlobStore(connection_string, container_name, path=’some’)
-# &gt;&gt;&gt; list(a_last_store)
-# [‘other/path/k1’, ‘path/k2’]</p>
-<p># Let’s delete all the blobs, to keep the Azure Storage Emulator clean:</p>
-<p># &gt;&gt;&gt; for k in store_all:
-# …     del store_all[k]</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">misc/docs/architecture.md</span></code> Layer B. Codec / convenience layers live in
+<code class="docutils literal notranslate"><span class="pre">azuredol.recipes</span></code>; the connection layer lives in <code class="docutils literal notranslate"><span class="pre">azuredol.connection</span></code>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.base.AccountCollection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AccountCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">container_store_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container_store_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AccountCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AccountCollection" title="Link to this definition"></a></dt>
+<dd><p>Mapping over container names in an account (iter / contains / len).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.base.AccountReader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AccountReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">container_store_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container_store_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AccountReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AccountReader" title="Link to this definition"></a></dt>
+<dd><p>Adds <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> returning a <code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code> (or configured subclass).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.base.AccountStore">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AccountStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">container_store_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container_store_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AccountStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AccountStore" title="Link to this definition"></a></dt>
+<dd><p>Read-write Mapping over containers in an account.</p>
+<p><code class="docutils literal notranslate"><span class="pre">__setitem__</span></code> creates a container; the value is ignored except when it’s a
+Mapping (in which case it is treated as an initial bulk-load).</p>
+<p><code class="docutils literal notranslate"><span class="pre">__delitem__</span></code> refuses non-empty containers — call <code class="docutils literal notranslate"><span class="pre">self.delete(name,</span> <span class="pre">force=True)</span></code>
+to acknowledge a cascading delete. See <code class="docutils literal notranslate"><span class="pre">misc/docs/design_decisions.md</span></code> §12.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="azuredol.base.AzureFiles.append_to_value">
-<span class="sig-name descname"><span class="pre">append_to_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureFiles.append_to_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AzureFiles.append_to_value" title="Link to this definition"></a></dt>
-<dd><p>Append to existing block</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> – key</p></li>
-<li><p><strong>v</strong> – blob data</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="azuredol.base.AccountStore.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/azuredol/base.html#AccountStore.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AccountStore.delete" title="Link to this definition"></a></dt>
+<dd><p>Delete a container; if <code class="docutils literal notranslate"><span class="pre">force=True</span></code>, cascade-delete any blobs first.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="azuredol.base.AzureReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AzureReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#AzureReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.AzureReader" title="Link to this definition"></a></dt>
-<dd><p>Key-Value mapping for accessing and reading Azure storage blob data</p>
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">BlobHandle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ContainerClient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle" title="Link to this definition"></a></dt>
+<dd><p>Thin facade over one <code class="docutils literal notranslate"><span class="pre">BlobClient</span></code>. Not a Mapping.</p>
+<p>Use when you need the full Azure-blob surface for a single blob: metadata,
+properties, conditional writes, leases, copy, append, SAS URL generation,
+streaming downloads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>container</strong> – An existing <code class="docutils literal notranslate"><span class="pre">ContainerClient</span></code> or a container name string.</p></li>
+<li><p><strong>blob</strong> – The blob name (relative to the container root; full path including ‘/’).</p></li>
+<li><p><strong>connection</strong> – Ignored if <code class="docutils literal notranslate"><span class="pre">container</span></code> is a <code class="docutils literal notranslate"><span class="pre">ContainerClient</span></code>. Otherwise
+resolved via <code class="docutils literal notranslate"><span class="pre">AzureConnection.from_anything</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.acquire_lease">
+<span class="sig-name descname"><span class="pre">acquire_lease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lease_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.acquire_lease"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.acquire_lease" title="Link to this definition"></a></dt>
+<dd><p>Acquire a lease (15-60s, or -1 for infinite). Returns a <code class="docutils literal notranslate"><span class="pre">BlobLeaseClient</span></code>.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="azuredol.base.AzureTextFiles">
-<span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">AzureTextFiles</span></span><a class="headerlink" href="#azuredol.base.AzureTextFiles" title="Link to this definition"></a></dt>
-<dd><p>alias of <a class="reference internal" href="#azuredol.base.AzureFiles" title="azuredol.base.AzureFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">AzureFiles</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.append" title="Link to this definition"></a></dt>
+<dd><p>Append bytes to an append-blob (creating it if absent).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.copy_from">
+<span class="sig-name descname"><span class="pre">copy_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_sync</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.copy_from"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.copy_from" title="Link to this definition"></a></dt>
+<dd><p>Server-side copy from a URL. Same-account = sync; cross-account = async (poll).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.create" title="Link to this definition"></a></dt>
+<dd><p>Strict-create variant of <code class="docutils literal notranslate"><span class="pre">write</span></code>; raises <code class="docutils literal notranslate"><span class="pre">BlobAlreadyExistsError</span></code> on conflict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.download_stream">
+<span class="sig-name descname"><span class="pre">download_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.download_stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.download_stream" title="Link to this definition"></a></dt>
+<dd><p>Return a streaming downloader. Iterate chunks via <code class="docutils literal notranslate"><span class="pre">.chunks()</span></code> or <code class="docutils literal notranslate"><span class="pre">.readinto(fp)</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.properties" title="Link to this definition"></a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">BlobProperties</span></code> (size, last_modified, etag, content_settings, metadata, …).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.read" title="Link to this definition"></a></dt>
+<dd><p>Download (possibly a range) and return bytes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.url">
+<span class="sig-name descname"><span class="pre">url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">expires_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">timedelta</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.url" title="Link to this definition"></a></dt>
+<dd><p>Return the blob URL.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">expires_in</span></code> is set and the underlying credential is a shared-key, a SAS
+URL with read permission is generated. Otherwise the plain blob URL is returned
+(which is only useful for public containers or pre-shared SAS contexts).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.BlobHandle.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">blob_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlobType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">BlobType.BLOCKBLOB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/azuredol/base.html#BlobHandle.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.BlobHandle.write" title="Link to this definition"></a></dt>
+<dd><p>Upload data; default overwrite=True for <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> symmetry.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.base.ContainerCollection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">ContainerCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ContainerClient</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blob_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlobType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">BlobType.BLOCKBLOB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#ContainerCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.ContainerCollection" title="Link to this definition"></a></dt>
+<dd><p>Iteration / membership / cardinality (<cite>__len__</cite> deliberately omitted) over a container.</p>
+<p><code class="docutils literal notranslate"><span class="pre">__len__</span></code> is intentionally NOT implemented — see
+<code class="docutils literal notranslate"><span class="pre">misc/docs/design_decisions.md</span></code> §2. Pagination cost is unbounded; users wanting
+a count call <code class="docutils literal notranslate"><span class="pre">sum(1</span> <span class="pre">for</span> <span class="pre">_</span> <span class="pre">in</span> <span class="pre">store)</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.base.ContainerCollection.walk">
+<span class="sig-name descname"><span class="pre">walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/azuredol/base.html#ContainerCollection.walk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.ContainerCollection.walk" title="Link to this definition"></a></dt>
+<dd><p>Hierarchical walk yielding either <code class="docutils literal notranslate"><span class="pre">BlobProperties</span></code> or <code class="docutils literal notranslate"><span class="pre">BlobPrefix</span></code> nodes.</p>
+<p>Thin pass-through to <code class="docutils literal notranslate"><span class="pre">ContainerClient.walk_blobs</span></code>. Useful for tree-shaped
+listings; not part of the Mapping interface.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.base.ContainerReader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">ContainerReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ContainerClient</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blob_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlobType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">BlobType.BLOCKBLOB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#ContainerReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.ContainerReader" title="Link to this definition"></a></dt>
+<dd><p>Adds <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> (returns bytes) over <code class="docutils literal notranslate"><span class="pre">ContainerCollection</span></code>.</p>
+<p>The trailing-slash sub-store convention lives here: <code class="docutils literal notranslate"><span class="pre">store['sub/']</span></code> returns a new
+<code class="docutils literal notranslate"><span class="pre">ContainerReader</span></code> with extended prefix and zero round-trips.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.base.ContainerStore">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.base.</span></span><span class="sig-name descname"><span class="pre">ContainerStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ContainerClient</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blob_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlobType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">BlobType.BLOCKBLOB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/base.html#ContainerStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.base.ContainerStore" title="Link to this definition"></a></dt>
+<dd><p>The primary read-write Mapping over an Azure container.</p>
+<p>Doctest below requires Azurite (or live Azure). It is shown but not auto-run.</p>
+<p>Example (requires Azurite):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">azuredol</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContainerStore</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">ContainerStore</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s1">&#39;my-test-container&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">connection</span><span class="o">=</span><span class="s1">&#39;UseDevelopmentStorage=true&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">create_container_if_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;v1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span>
+<span class="go">b&#39;v1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;k1&#39;</span> <span class="ow">in</span> <span class="n">s</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>For unit tests without Azurite, prototype with <code class="docutils literal notranslate"><span class="pre">dol</span></code>’s in-memory pattern:
+<code class="docutils literal notranslate"><span class="pre">wrap_kvs(dict(),</span> <span class="pre">...)</span></code>.</p>
 </dd></dl>
 
 </section>
@@ -200,8 +278,8 @@ emulator installed and running.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="_old_base.html" class="btn btn-neutral float-left" title="azuredol._old_base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="functions.html" class="btn btn-neutral float-right" title="azuredol.functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../azuredol.html" class="btn btn-neutral float-left" title="azuredol" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="connection.html" class="btn btn-neutral float-right" title="azuredol.connection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

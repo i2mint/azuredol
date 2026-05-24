@@ -5,18 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.base &mdash; azuredol 0.1.6 documentation</title>
+  <title>azuredol.base &mdash; azuredol 0.1.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -47,9 +47,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol.html">azuredol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/_old_base.html">azuredol._old_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/base.html">azuredol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/connection.html">azuredol.connection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/errors.html">azuredol.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/functions.html">azuredol.functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/testing.html">azuredol.testing</a></li>
 </ul>
 
         </div>
@@ -77,254 +80,522 @@
            <div itemprop="articleBody">
              
   <h1>Source code for azuredol.base</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Azure Storage Data Object Layer&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Close-to-metal Mapping stores over Azure Blob Storage.</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">azure.storage.blob</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContainerClient</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">KvReader</span><span class="p">,</span> <span class="n">KvPersister</span><span class="p">,</span> <span class="n">filt_iter</span><span class="p">,</span> <span class="n">wrap_kvs</span><span class="p">,</span> <span class="n">ValueCodecs</span>
+<span class="sd">Three concrete classes:</span>
 
-<span class="c1"># TODO: Implement three types of blobs: block, append, and page blobs (see https://github.com/i2mint/azuredol/discussions/2#discussioncomment-12176104)</span>
-<span class="c1"># TODO: Use cache_property to cache the container client</span>
-<span class="c1"># TODO: Implement appendable blob objects</span>
-<span class="c1"># TODO: Implement close to metal len and contains methods</span>
-<span class="c1"># TODO: Do we really need/want the key codecs in the base class?</span>
+<span class="sd">- ``ContainerStore`` — the primary store. Mapping of blob name → bytes within one container.</span>
+<span class="sd">- ``AccountStore`` — mapping of container name → ``ContainerStore`` within one account.</span>
+<span class="sd">- ``BlobHandle``  — non-Mapping escape hatch for one blob with the full Azure surface.</span>
 
-<span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># 4MB</span>
+<span class="sd">See ``misc/docs/architecture.md`` Layer B. Codec / convenience layers live in</span>
+<span class="sd">``azuredol.recipes``; the connection layer lives in ``azuredol.connection``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">azure.storage.blob</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BlobClient</span><span class="p">,</span>
+    <span class="n">BlobServiceClient</span><span class="p">,</span>
+    <span class="n">BlobType</span><span class="p">,</span>
+    <span class="n">ContainerClient</span><span class="p">,</span>
+    <span class="n">ContentSettings</span><span class="p">,</span>
+    <span class="n">generate_blob_sas</span><span class="p">,</span>
+    <span class="n">BlobSasPermissions</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">KvReader</span><span class="p">,</span> <span class="n">KvPersister</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">azuredol.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">AzureConnection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">azuredol.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BlobNotFoundError</span><span class="p">,</span>
+    <span class="n">ContainerAlreadyExistsError</span><span class="p">,</span>
+    <span class="n">ContainerNotEmptyError</span><span class="p">,</span>
+    <span class="n">ContainerNotFoundError</span><span class="p">,</span>
+    <span class="n">translate_azure_errors</span><span class="p">,</span>
+<span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_append_block</span><span class="p">(</span><span class="n">blob_client</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
-        <span class="n">v_bytes</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_bytes</span><span class="p">),</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">):</span>
-            <span class="n">block</span> <span class="o">=</span> <span class="n">v_bytes</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">AZURE_STORAGE_BLOCK_SIZE_LIMIT</span><span class="p">]</span>
-            <span class="n">blob_client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># ContainerStore — the primary store</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="AzureReader">
-<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureReader">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">AzureReader</span><span class="p">(</span><span class="n">KvReader</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Key-Value mapping for accessing and reading Azure storage blob data</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ContainerStoreBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shared init / repr for the ContainerStore family.</span>
+
+<span class="sd">    Held separate from ``KvReader`` so the same init can back the read-only,</span>
+<span class="sd">    read-write, and append-only variants.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">container_name</span><span class="p">,</span>
-        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">container</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContainerClient</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">connection_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">create_container_if_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AzureConnection</span><span class="p">,</span> <span class="n">BlobServiceClient</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">create_container_if_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">blob_type</span><span class="p">:</span> <span class="n">BlobType</span> <span class="o">=</span> <span class="n">BlobType</span><span class="o">.</span><span class="n">BlockBlob</span><span class="p">,</span>
+        <span class="n">upload_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">download_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect to Azure storate blob service client to create and access appendable</span>
-<span class="sd">        blob data&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">container_name</span><span class="o">=</span><span class="n">container_name</span><span class="p">,</span>
-            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-            <span class="n">connection_string</span><span class="o">=</span><span class="n">connection_string</span><span class="p">,</span>
-            <span class="n">create_container_if_missing</span><span class="o">=</span><span class="n">create_container_if_missing</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span> <span class="o">=</span> <span class="n">container_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span> <span class="o">=</span> <span class="n">ContainerClient</span><span class="o">.</span><span class="n">from_connection_string</span><span class="p">(</span>
-            <span class="n">connection_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_container_if_missing</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">create_container</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Container </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">container_name</span><span class="si">}</span><span class="s1"> does not exist&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="k">if</span> <span class="n">path</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a store scoped to one container (and optional prefix).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            container: An existing ``ContainerClient`` (used as-is) or a container</span>
+<span class="sd">                name string (resolved via ``connection``).</span>
+<span class="sd">            prefix: A blob-name prefix that all keys are scoped under. Trailing slash</span>
+<span class="sd">                is normalised in.</span>
+<span class="sd">            connection: An ``AzureConnection``, a ``BlobServiceClient``, a connection</span>
+<span class="sd">                string, a kwargs dict, or ``None`` (defer to env / AAD). Ignored if</span>
+<span class="sd">                ``container`` is already a ``ContainerClient``.</span>
+<span class="sd">            create_container_if_missing: If True and the container does not exist,</span>
+<span class="sd">                create it on first use.</span>
+<span class="sd">            blob_type: Default blob type for writes. ``BlockBlob`` per</span>
+<span class="sd">                ``misc/docs/design_decisions.md`` §1.</span>
+<span class="sd">            upload_kwargs: Extra kwargs forwarded to ``BlobClient.upload_blob`` on writes.</span>
+<span class="sd">            download_kwargs: Extra kwargs forwarded to ``BlobClient.download_blob`` on reads.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">ContainerClient</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span> <span class="o">=</span> <span class="n">container</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">AzureConnection</span><span class="o">.</span><span class="n">from_anything</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">container_client</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">container_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blob_type</span> <span class="o">=</span> <span class="n">blob_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upload_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">upload_kwargs</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">download_kwargs</span> <span class="ow">or</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_container_if_missing</span> <span class="o">=</span> <span class="n">create_container_if_missing</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">container_name</span><span class="si">!r}</span><span class="s1">, path=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">!r}</span><span class="s1">)&#39;</span>
+        <span class="k">if</span> <span class="n">create_container_if_missing</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">create_container</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download and return blob data</span>
+    <span class="c1"># ---- key &lt;-&gt; id translation ----</span>
 
-<span class="sd">        :param k: key</span>
-<span class="sd">        :return: blob data</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_id_of_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_key_of_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_id</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="p">:]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="k">else</span> <span class="n">_id</span>
+
+    <span class="c1"># ---- repr ----</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">bits</span> <span class="o">=</span> <span class="p">[</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">container_name</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">:</span>
+            <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prefix=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">blob_type</span> <span class="o">!=</span> <span class="n">BlobType</span><span class="o">.</span><span class="n">BlockBlob</span><span class="p">:</span>
+            <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blob_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">blob_type</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="c1"># ---- internal: derive a sibling store with adjusted attrs ----</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ContainerStoreBase&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a new instance of the same class with overridden init kwargs.</span>
+
+<span class="sd">        Used by the trailing-slash sub-store convention. Carries the underlying</span>
+<span class="sd">        ``ContainerClient`` over to avoid re-resolving credentials.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_id</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
-            <span class="n">_new_init_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">_id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">**</span><span class="n">_new_init_kwargs</span><span class="p">)</span>
-        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="n">_id</span><span class="p">)</span>
-        <span class="n">blob_data</span> <span class="o">=</span> <span class="n">blob_client</span><span class="o">.</span><span class="n">download_blob</span><span class="p">()</span><span class="o">.</span><span class="n">readall</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">blob_data</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate blob keys</span>
-
-<span class="sd">        :return: Generator of blob keys</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">blob_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key_of_id</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blob_iter</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if blob exists</span>
-
-<span class="sd">        :param k: key</span>
-<span class="sd">        :return: True if blob exists, False otherwise</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">blob_client</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of blobs</span>
-
-<span class="sd">        :return: Number of blobs</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_id_of_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_key_of_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">id</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="p">:]</span></div>
+        <span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">container</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">),</span>
+            <span class="n">connection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">create_container_if_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">blob_type</span><span class="o">=</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;blob_type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blob_type</span><span class="p">),</span>
+            <span class="n">upload_kwargs</span><span class="o">=</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;upload_kwargs&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upload_kwargs</span><span class="p">)),</span>
+            <span class="n">download_kwargs</span><span class="o">=</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+                <span class="s2">&quot;download_kwargs&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">download_kwargs</span><span class="p">)</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">overrides</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="ContainerCollection">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.ContainerCollection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContainerCollection</span><span class="p">(</span><span class="n">_ContainerStoreBase</span><span class="p">,</span> <span class="n">KvReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Iteration / membership / cardinality (`__len__` deliberately omitted) over a container.</span>
 
-<div class="viewcode-block" id="AzureFiles">
-<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureFiles">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">AzureFiles</span><span class="p">(</span><span class="n">AzureReader</span><span class="p">,</span> <span class="n">KvPersister</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Azure storage blob data key-value mapping for creating, reading, updating, and</span>
-<span class="sd">    deleting</span>
-
-<span class="sd">    :param container_name: unique identifier used to distinguish container instances</span>
-<span class="sd">    :param connection_string: authorization info to access data in an Azure Storage</span>
-<span class="sd">    account</span>
-
-<span class="sd">    Let&#39;s use the local Azure Storage Emulator to test this out. Make sure you have the</span>
-<span class="sd">    emulator installed and running.</span>
-
-<span class="sd">    # &gt;&gt;&gt; import os</span>
-<span class="sd">    # &gt;&gt;&gt; connection_string = os.getenv(&#39;TEST_AZURE_STORAGE_CONNECTION_STRING&#39;)</span>
-<span class="sd">    # &gt;&gt;&gt; container_name=&#39;azuredol-container&#39;</span>
-
-<span class="sd">    # We create a store instance with a path as a prefix to all keys:</span>
-
-<span class="sd">    # &gt;&gt;&gt; store = AzureBlobStore(connection_string, container_name, path=&#39;some/path&#39;)</span>
-
-<span class="sd">    # We can create a blob and set its value:</span>
-
-<span class="sd">    # &gt;&gt;&gt; store[&#39;k1&#39;] = &#39;v1&#39;</span>
-<span class="sd">    # &gt;&gt;&gt; store[&#39;k1&#39;]</span>
-<span class="sd">    # b&#39;v1&#39;</span>
-
-<span class="sd">    # We can append to the blob&#39;s value:</span>
-
-<span class="sd">    # &gt;&gt;&gt; store.append_to_value(&#39;k1&#39;, &#39;v1&#39;)</span>
-<span class="sd">    # &gt;&gt;&gt; store[&#39;k1&#39;]</span>
-<span class="sd">    # b&#39;v1v1&#39;</span>
-
-<span class="sd">    # Let&#39;s create another blob:</span>
-
-<span class="sd">    # &gt;&gt;&gt; store[&#39;k2&#39;] = &#39;v2&#39;</span>
-<span class="sd">    # &gt;&gt;&gt; store[&#39;k2&#39;]</span>
-<span class="sd">    # b&#39;v2&#39;</span>
-
-<span class="sd">    # We can list the keys of the store:</span>
-
-<span class="sd">    # &gt;&gt;&gt; list(store)</span>
-<span class="sd">    # [&#39;k1&#39;, &#39;k2&#39;]</span>
-
-<span class="sd">    # We can list the values of the store:</span>
-
-<span class="sd">    # &gt;&gt;&gt; list(store.values())</span>
-<span class="sd">    # [b&#39;v1v1&#39;, b&#39;v2&#39;]</span>
-
-<span class="sd">    # We can list the items of the store:</span>
-
-<span class="sd">    # &gt;&gt;&gt; list(store.items())</span>
-<span class="sd">    # [(&#39;k1&#39;, b&#39;v1v1&#39;), (&#39;k2&#39;, b&#39;v2&#39;)]</span>
-
-<span class="sd">    # Let&#39;s create another store instance without a path. We can see that the key is</span>
-<span class="sd">    # present in this store as well:</span>
-
-<span class="sd">    # &gt;&gt;&gt; store_all = AzureBlobStore(connection_string, container_name)</span>
-<span class="sd">    # &gt;&gt;&gt; list(store_all)</span>
-<span class="sd">    # [&#39;some/path/k1&#39;, &#39;some/path/k2&#39;]</span>
-
-<span class="sd">    # We can delete a blob:</span>
-
-<span class="sd">    # &gt;&gt;&gt; del store[&#39;k1&#39;]</span>
-
-<span class="sd">    # We can see that the blob is deleted from the stores:</span>
-
-<span class="sd">    # &gt;&gt;&gt; list(store)</span>
-<span class="sd">    # [&#39;k2&#39;]</span>
-<span class="sd">    # &gt;&gt;&gt; list(store_all)</span>
-<span class="sd">    # [&#39;some/path/k2&#39;]</span>
-
-<span class="sd">    # We can create another store instance with a different path and add a blob. We can</span>
-<span class="sd">    # see that the blob is present in this store but not the first one. Also, the blob is</span>
-<span class="sd">    # present in the store without a path:</span>
-
-<span class="sd">    # &gt;&gt;&gt; other_store = AzureBlobStore(connection_string, container_name, path=&#39;some/other/path&#39;)</span>
-<span class="sd">    # &gt;&gt;&gt; other_store[&#39;k1&#39;] = &#39;v1&#39;</span>
-<span class="sd">    # &gt;&gt;&gt; list(other_store)</span>
-<span class="sd">    # [&#39;k1&#39;]</span>
-<span class="sd">    # &gt;&gt;&gt; list(store)</span>
-<span class="sd">    # [&#39;k2&#39;]</span>
-<span class="sd">    # &gt;&gt;&gt; list(store_all)</span>
-<span class="sd">    # [&#39;some/other/path/k1&#39;, &#39;some/path/k2&#39;]</span>
-
-<span class="sd">    # But, we can create a last store with a path that is the common prefix of the other</span>
-<span class="sd">    # two paths. And we can see that both blobs are present in this store:</span>
-
-<span class="sd">    # &gt;&gt;&gt; a_last_store = AzureBlobStore(connection_string, container_name, path=&#39;some&#39;)</span>
-<span class="sd">    # &gt;&gt;&gt; list(a_last_store)</span>
-<span class="sd">    # [&#39;other/path/k1&#39;, &#39;path/k2&#39;]</span>
-
-<span class="sd">    # Let&#39;s delete all the blobs, to keep the Azure Storage Emulator clean:</span>
-
-<span class="sd">    # &gt;&gt;&gt; for k in store_all:</span>
-<span class="sd">    # ...     del store_all[k]</span>
-
+<span class="sd">    ``__len__`` is intentionally NOT implemented — see</span>
+<span class="sd">    ``misc/docs/design_decisions.md`` §2. Pagination cost is unbounded; users wanting</span>
+<span class="sd">    a count call ``sum(1 for _ in store)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create appendable blob and set value</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">name_starts_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_of_id</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-<span class="sd">        :param k: key</span>
-<span class="sd">        :param v: blob data</span>
-<span class="sd">        :return: None</span>
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+    <span class="c1"># Per design_decisions.md §2: do NOT implement __len__ on the metal store.</span>
+    <span class="c1"># ``Mapping.__len__`` is inherited from ABC and would raise NotImplementedError;</span>
+    <span class="c1"># we explicitly delete it so ``len(store)`` raises ``TypeError`` (matching dict-of-</span>
+    <span class="c1"># unknown-size semantics in Python).</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not implement __len__ (unbounded pagination &quot;</span>
+            <span class="s2">&quot;cost). Use `sum(1 for _ in store)` if you accept the scan cost.&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ContainerCollection.walk">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.ContainerCollection.walk">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">walk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Hierarchical walk yielding either ``BlobProperties`` or ``BlobPrefix`` nodes.</span>
+
+<span class="sd">        Thin pass-through to ``ContainerClient.walk_blobs``. Useful for tree-shaped</span>
+<span class="sd">        listings; not part of the Mapping interface.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
-        <span class="n">blob_client</span><span class="o">.</span><span class="n">create_append_blob</span><span class="p">()</span>
-        <span class="n">_append_block</span><span class="p">(</span><span class="n">blob_client</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-
-    <span class="c1"># TODO: Would be nice to have store[k].append(v) instead of this. The hard part is</span>
-    <span class="c1"># that we don&#39;t want to download the blob when calling store[k] in this case.</span>
-<div class="viewcode-block" id="AzureFiles.append_to_value">
-<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.base.AzureFiles.append_to_value">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">append_to_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append to existing block</span>
-
-<span class="sd">        :param k: key</span>
-<span class="sd">        :param v: blob data</span>
-<span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">blob_client</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-        <span class="n">_append_block</span><span class="p">(</span><span class="n">blob_client</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">walk_blobs</span><span class="p">(</span>
+            <span class="n">name_starts_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span>
+        <span class="p">)</span></div>
+</div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete blob</span>
 
-<span class="sd">        :param k: key</span>
-<span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="n">blob</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+<div class="viewcode-block" id="ContainerReader">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.ContainerReader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContainerReader</span><span class="p">(</span><span class="n">ContainerCollection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds ``__getitem__`` (returns bytes) over ``ContainerCollection``.</span>
+
+<span class="sd">    The trailing-slash sub-store convention lives here: ``store[&#39;sub/&#39;]`` returns a new</span>
+<span class="sd">    ``ContainerReader`` with extended prefix and zero round-trips.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">not_found_cls</span><span class="o">=</span><span class="n">BlobNotFoundError</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="c1"># Trailing-slash sub-store convention.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_with</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">blob_client</span><span class="o">.</span><span class="n">download_blob</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">download_kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">readall</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="ContainerStore">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.ContainerStore">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContainerStore</span><span class="p">(</span><span class="n">ContainerReader</span><span class="p">,</span> <span class="n">KvPersister</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary read-write Mapping over an Azure container.</span>
+
+<span class="sd">    Doctest below requires Azurite (or live Azure). It is shown but not auto-run.</span>
+
+<span class="sd">    Example (requires Azurite):</span>
+
+<span class="sd">        &gt;&gt;&gt; from azuredol import ContainerStore</span>
+<span class="sd">        &gt;&gt;&gt; s = ContainerStore(  # doctest: +SKIP</span>
+<span class="sd">        ...     &#39;my-test-container&#39;,</span>
+<span class="sd">        ...     connection=&#39;UseDevelopmentStorage=true&#39;,</span>
+<span class="sd">        ...     create_container_if_missing=True,</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; s[&#39;k1&#39;] = b&#39;v1&#39;                     # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; s[&#39;k1&#39;]                              # doctest: +SKIP</span>
+<span class="sd">        b&#39;v1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; &#39;k1&#39; in s                            # doctest: +SKIP</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; del s[&#39;k1&#39;]                          # doctest: +SKIP</span>
+
+<span class="sd">    For unit tests without Azurite, prototype with ``dol``&#39;s in-memory pattern:</span>
+<span class="sd">    ``wrap_kvs(dict(), ...)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="c1"># Default to overwrite=True per design_decisions.md §7.</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;overwrite&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;blob_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blob_type</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">upload_kwargs</span><span class="p">}</span>
+        <span class="n">blob_client</span><span class="o">.</span><span class="n">upload_blob</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">not_found_cls</span><span class="o">=</span><span class="n">BlobNotFoundError</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">blob_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
         <span class="n">blob_client</span><span class="o">.</span><span class="n">delete_blob</span><span class="p">()</span></div>
 
 
 
-<span class="c1"># TODO: Replace decoder by pickle-able one</span>
-<span class="n">AzureTextFiles</span> <span class="o">=</span> <span class="n">wrap_kvs</span><span class="p">(</span><span class="n">AzureFiles</span><span class="p">,</span> <span class="n">value_decoder</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># BlobHandle — non-Mapping escape hatch for a single blob</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="BlobHandle">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlobHandle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thin facade over one ``BlobClient``. Not a Mapping.</span>
+
+<span class="sd">    Use when you need the full Azure-blob surface for a single blob: metadata,</span>
+<span class="sd">    properties, conditional writes, leases, copy, append, SAS URL generation,</span>
+<span class="sd">    streaming downloads.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        container: An existing ``ContainerClient`` or a container name string.</span>
+<span class="sd">        blob: The blob name (relative to the container root; full path including &#39;/&#39;).</span>
+<span class="sd">        connection: Ignored if ``container`` is a ``ContainerClient``. Otherwise</span>
+<span class="sd">            resolved via ``AzureConnection.from_anything``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">container</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContainerClient</span><span class="p">],</span>
+        <span class="n">blob</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AzureConnection</span><span class="p">,</span> <span class="n">BlobServiceClient</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">ContainerClient</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span> <span class="o">=</span> <span class="n">container</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">AzureConnection</span><span class="o">.</span><span class="n">from_anything</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">container_client</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">container_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blob</span> <span class="o">=</span> <span class="n">blob</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlobClient</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_client</span><span class="o">.</span><span class="n">get_blob_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blob</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;BlobHandle(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">container_name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">blob</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+
+    <span class="c1"># ---- core ops ----</span>
+
+<div class="viewcode-block" id="BlobHandle.read">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.read">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download (possibly a range) and return bytes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">download_blob</span><span class="p">(</span><span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span><span class="o">.</span><span class="n">readall</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BlobHandle.download_stream">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.download_stream">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a streaming downloader. Iterate chunks via ``.chunks()`` or ``.readinto(fp)``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">download_blob</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BlobHandle.write">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.write">[docs]</a>
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="s2">&quot;blob&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">blob_type</span><span class="p">:</span> <span class="n">BlobType</span> <span class="o">=</span> <span class="n">BlobType</span><span class="o">.</span><span class="n">BlockBlob</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">content_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Upload data; default overwrite=True for ``MutableMapping`` symmetry.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">content_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;content_settings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContentSettings</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">upload_blob</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">blob_type</span><span class="o">=</span><span class="n">blob_type</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlobHandle.create">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.create">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Strict-create variant of ``write``; raises ``BlobAlreadyExistsError`` on conflict.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlobHandle.append">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.append">[docs]</a>
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="s2">&quot;blob&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append bytes to an append-blob (creating it if absent).&quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">client</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">create_append_blob</span><span class="p">()</span>
+        <span class="c1"># 4 MiB block limit on append blobs.</span>
+        <span class="n">block_size</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">block_size</span><span class="p">):</span>
+            <span class="n">block</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">block_size</span><span class="p">]</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">append_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">))</span></div>
+
+
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="s2">&quot;blob&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">delete_blob</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BlobHandle.properties">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.properties">[docs]</a>
+    <span class="nd">@translate_azure_errors</span><span class="p">(</span><span class="n">key_arg</span><span class="o">=</span><span class="s2">&quot;blob&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ``BlobProperties`` (size, last_modified, etag, content_settings, metadata, …).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_blob_properties</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BlobHandle.copy_from">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.copy_from">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">requires_sync</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Server-side copy from a URL. Same-account = sync; cross-account = async (poll).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">start_copy_from_url</span><span class="p">(</span><span class="n">source_url</span><span class="p">,</span> <span class="n">requires_sync</span><span class="o">=</span><span class="n">requires_sync</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlobHandle.acquire_lease">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.acquire_lease">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acquire_lease</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lease_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Acquire a lease (15-60s, or -1 for infinite). Returns a ``BlobLeaseClient``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">acquire_lease</span><span class="p">(</span><span class="n">lease_duration</span><span class="o">=</span><span class="n">lease_duration</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlobHandle.url">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.BlobHandle.url">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">expires_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">timedelta</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the blob URL.</span>
+
+<span class="sd">        If ``expires_in`` is set and the underlying credential is a shared-key, a SAS</span>
+<span class="sd">        URL with read permission is generated. Otherwise the plain blob URL is returned</span>
+<span class="sd">        (which is only useful for public containers or pre-shared SAS contexts).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span>
+        <span class="k">if</span> <span class="n">expires_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">url</span>
+        <span class="c1"># SAS generation requires the account key. Pull from the service client.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">account_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">credential</span><span class="o">.</span><span class="n">account_key</span>  <span class="c1"># type: ignore[attr-defined]</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;SAS URL generation requires a shared-key credential on this client. &quot;</span>
+                <span class="s2">&quot;Use a connection string or account_key= when constructing the store, or &quot;</span>
+                <span class="s2">&quot;generate the SAS upstream via azure.identity user-delegation flows.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="n">sas</span> <span class="o">=</span> <span class="n">generate_blob_sas</span><span class="p">(</span>
+            <span class="n">account_name</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">account_name</span><span class="p">,</span>
+            <span class="n">container_name</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">container_name</span><span class="p">,</span>
+            <span class="n">blob_name</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">blob_name</span><span class="p">,</span>
+            <span class="n">account_key</span><span class="o">=</span><span class="n">account_key</span><span class="p">,</span>
+            <span class="n">permission</span><span class="o">=</span><span class="n">BlobSasPermissions</span><span class="p">(</span><span class="n">read</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">expiry</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">expires_in</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">client</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">?</span><span class="si">{</span><span class="n">sas</span><span class="si">}</span><span class="s2">&quot;</span></div>
+</div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># AccountStore — mapping of container name → ContainerStore</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_AccountStoreBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shared init/repr for the AccountStore family.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AzureConnection</span><span class="p">,</span> <span class="n">BlobServiceClient</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">container_store_cls</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">container_store_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">AzureConnection</span><span class="o">.</span><span class="n">from_anything</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">service_client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_container_store_cls</span> <span class="o">=</span> <span class="n">container_store_cls</span> <span class="ow">or</span> <span class="n">ContainerStore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_container_store_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">container_store_kwargs</span> <span class="ow">or</span> <span class="p">{})</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(account=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span><span class="o">.</span><span class="n">account_name</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+
+
+<div class="viewcode-block" id="AccountCollection">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.AccountCollection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AccountCollection</span><span class="p">(</span><span class="n">_AccountStoreBase</span><span class="p">,</span> <span class="n">KvReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mapping over container names in an account (iter / contains / len).&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span><span class="o">.</span><span class="n">list_containers</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span><span class="o">.</span><span class="n">get_container_client</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># Containers per account are small (administrative resource) — counting is cheap.</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AccountReader">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.AccountReader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AccountReader</span><span class="p">(</span><span class="n">AccountCollection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds ``__getitem__`` returning a ``ContainerStore`` (or configured subclass).&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span><span class="o">.</span><span class="n">get_container_client</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cc</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ContainerNotFoundError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_store_cls</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_container_store_kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AccountStore">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.AccountStore">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AccountStore</span><span class="p">(</span><span class="n">AccountReader</span><span class="p">,</span> <span class="n">KvPersister</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read-write Mapping over containers in an account.</span>
+
+<span class="sd">    ``__setitem__`` creates a container; the value is ignored except when it&#39;s a</span>
+<span class="sd">    Mapping (in which case it is treated as an initial bulk-load).</span>
+
+<span class="sd">    ``__delitem__`` refuses non-empty containers — call ``self.delete(name, force=True)``</span>
+<span class="sd">    to acknowledge a cascading delete. See ``misc/docs/design_decisions.md`` §12.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span><span class="o">.</span><span class="n">get_container_client</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cc</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ContainerAlreadyExistsError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">cc</span><span class="o">.</span><span class="n">create_container</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+            <span class="c1"># Bulk-load convenience: if v is a Mapping, populate.</span>
+            <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_store_cls</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_container_store_kwargs</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">for</span> <span class="n">bk</span><span class="p">,</span> <span class="n">bv</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="n">store</span><span class="p">[</span><span class="n">bk</span><span class="p">]</span> <span class="o">=</span> <span class="n">bv</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span><span class="o">.</span><span class="n">get_container_client</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cc</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ContainerNotFoundError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="c1"># Refuse non-empty containers; force-delete is opt-in via .delete(name, force=True).</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">results_per_page</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="k">raise</span> <span class="n">ContainerNotEmptyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Container </span><span class="si">{</span><span class="n">k</span><span class="si">!r}</span><span class="s2"> is not empty. Call &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`account_store.delete(</span><span class="si">{</span><span class="n">k</span><span class="si">!r}</span><span class="s2">, force=True)` to cascade-delete its blobs.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">cc</span><span class="o">.</span><span class="n">delete_container</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AccountStore.delete">
+<a class="viewcode-back" href="../../module_docs/azuredol/base.html#azuredol.AccountStore.delete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a container; if ``force=True``, cascade-delete any blobs first.&quot;&quot;&quot;</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_client</span><span class="o">.</span><span class="n">get_container_client</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cc</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ContainerNotFoundError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">cc</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">():</span>
+                <span class="n">cc</span><span class="o">.</span><span class="n">delete_blob</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">cc</span><span class="o">.</span><span class="n">delete_container</span><span class="p">()</span></div>
+</div>
+
 </pre></div>
 
            </div>

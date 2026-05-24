@@ -3,6 +3,9 @@
    :caption: Contents:
 
    module_docs/azuredol
-   module_docs/azuredol/_old_base
    module_docs/azuredol/base
+   module_docs/azuredol/connection
+   module_docs/azuredol/errors
    module_docs/azuredol/functions
+   module_docs/azuredol/recipes
+   module_docs/azuredol/testing

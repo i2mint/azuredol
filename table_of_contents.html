@@ -6,18 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; azuredol 0.1.6 documentation</title>
+  <title>&lt;no title&gt; &mdash; azuredol 0.1.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6e0256f3"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
@@ -48,9 +48,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol.html">azuredol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/_old_base.html">azuredol._old_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/base.html">azuredol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/connection.html">azuredol.connection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/errors.html">azuredol.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/functions.html">azuredol.functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/testing.html">azuredol.testing</a></li>
 </ul>
 
         </div>
@@ -80,21 +83,72 @@
   <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol.html">azuredol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/_old_base.html">azuredol._old_base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/_old_base.html#azuredol._old_base.AzureBlobPersisterMixin"><code class="docutils literal notranslate"><span class="pre">AzureBlobPersisterMixin</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/_old_base.html#azuredol._old_base.AzureBlobReaderMixin"><code class="docutils literal notranslate"><span class="pre">AzureBlobReaderMixin</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/_old_base.html#azuredol._old_base.AzureBlobStore"><code class="docutils literal notranslate"><span class="pre">AzureBlobStore</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol.html">azuredol</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.AccountCollection"><code class="docutils literal notranslate"><span class="pre">AccountCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.AccountReader"><code class="docutils literal notranslate"><span class="pre">AccountReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.AccountStore"><code class="docutils literal notranslate"><span class="pre">AccountStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.AzureConnection"><code class="docutils literal notranslate"><span class="pre">AzureConnection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.AzureJsonStore"><code class="docutils literal notranslate"><span class="pre">AzureJsonStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.AzurePickleStore"><code class="docutils literal notranslate"><span class="pre">AzurePickleStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.AzureTextStore"><code class="docutils literal notranslate"><span class="pre">AzureTextStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.BlobAlreadyExistsError"><code class="docutils literal notranslate"><span class="pre">BlobAlreadyExistsError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.BlobHandle"><code class="docutils literal notranslate"><span class="pre">BlobHandle</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.BlobNotFoundError"><code class="docutils literal notranslate"><span class="pre">BlobNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.ContainerAlreadyExistsError"><code class="docutils literal notranslate"><span class="pre">ContainerAlreadyExistsError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.ContainerCollection"><code class="docutils literal notranslate"><span class="pre">ContainerCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.ContainerNotEmptyError"><code class="docutils literal notranslate"><span class="pre">ContainerNotEmptyError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.ContainerNotFoundError"><code class="docutils literal notranslate"><span class="pre">ContainerNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.ContainerReader"><code class="docutils literal notranslate"><span class="pre">ContainerReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.ContainerStore"><code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.azure_func_service"><code class="docutils literal notranslate"><span class="pre">azure_func_service()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.azure_store"><code class="docutils literal notranslate"><span class="pre">azure_store()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.resolve_credential"><code class="docutils literal notranslate"><span class="pre">resolve_credential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol.html#azuredol.translate_azure_errors"><code class="docutils literal notranslate"><span class="pre">translate_azure_errors()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/base.html">azuredol.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.AzureFiles"><code class="docutils literal notranslate"><span class="pre">AzureFiles</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.AzureReader"><code class="docutils literal notranslate"><span class="pre">AzureReader</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.AzureTextFiles"><code class="docutils literal notranslate"><span class="pre">AzureTextFiles</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.AccountCollection"><code class="docutils literal notranslate"><span class="pre">AccountCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.AccountReader"><code class="docutils literal notranslate"><span class="pre">AccountReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.AccountStore"><code class="docutils literal notranslate"><span class="pre">AccountStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.BlobHandle"><code class="docutils literal notranslate"><span class="pre">BlobHandle</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.ContainerCollection"><code class="docutils literal notranslate"><span class="pre">ContainerCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.ContainerReader"><code class="docutils literal notranslate"><span class="pre">ContainerReader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/base.html#azuredol.base.ContainerStore"><code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/connection.html">azuredol.connection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/connection.html#azuredol.connection.AzureConnection"><code class="docutils literal notranslate"><span class="pre">AzureConnection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/connection.html#azuredol.connection.CredentialLike"><code class="docutils literal notranslate"><span class="pre">CredentialLike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/connection.html#azuredol.connection.resolve_credential"><code class="docutils literal notranslate"><span class="pre">resolve_credential()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/errors.html">azuredol.errors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/errors.html#azuredol.errors.BlobAlreadyExistsError"><code class="docutils literal notranslate"><span class="pre">BlobAlreadyExistsError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/errors.html#azuredol.errors.BlobNotFoundError"><code class="docutils literal notranslate"><span class="pre">BlobNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/errors.html#azuredol.errors.ContainerAlreadyExistsError"><code class="docutils literal notranslate"><span class="pre">ContainerAlreadyExistsError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/errors.html#azuredol.errors.ContainerNotEmptyError"><code class="docutils literal notranslate"><span class="pre">ContainerNotEmptyError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/errors.html#azuredol.errors.ContainerNotFoundError"><code class="docutils literal notranslate"><span class="pre">ContainerNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/errors.html#azuredol.errors.translate_azure_errors"><code class="docutils literal notranslate"><span class="pre">translate_azure_errors()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/functions.html">azuredol.functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/functions.html#azuredol.functions.azure_func_service"><code class="docutils literal notranslate"><span class="pre">azure_func_service()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/recipes.html">azuredol.recipes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/recipes.html#azuredol.recipes.AppendBlobStore"><code class="docutils literal notranslate"><span class="pre">AppendBlobStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/recipes.html#azuredol.recipes.AzureJsonStore"><code class="docutils literal notranslate"><span class="pre">AzureJsonStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/recipes.html#azuredol.recipes.AzurePickleStore"><code class="docutils literal notranslate"><span class="pre">AzurePickleStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/recipes.html#azuredol.recipes.AzureTextStore"><code class="docutils literal notranslate"><span class="pre">AzureTextStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/recipes.html#azuredol.recipes.azure_store"><code class="docutils literal notranslate"><span class="pre">azure_store()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/azuredol/testing.html">azuredol.testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/testing.html#azuredol.testing.azurite"><code class="docutils literal notranslate"><span class="pre">azurite()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/testing.html#azuredol.testing.azurite_is_running"><code class="docutils literal notranslate"><span class="pre">azurite_is_running()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/testing.html#azuredol.testing.docker_available"><code class="docutils literal notranslate"><span class="pre">docker_available()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/testing.html#azuredol.testing.mk_test_store"><code class="docutils literal notranslate"><span class="pre">mk_test_store()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/azuredol/testing.html#azuredol.testing.pytest_azurite_connection"><code class="docutils literal notranslate"><span class="pre">pytest_azurite_connection()</span></code></a></li>
 </ul>
 </li>
 </ul>

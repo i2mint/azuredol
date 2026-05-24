@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>azuredol.connection &mdash; azuredol 0.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="azuredol.errors" href="errors.html" />
+    <link rel="prev" title="azuredol.base" href="base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            azuredol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../azuredol.html">azuredol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">azuredol.base</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">azuredol.connection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.connection.AzureConnection"><code class="docutils literal notranslate"><span class="pre">AzureConnection</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.connection.AzureConnection.blob_client"><code class="docutils literal notranslate"><span class="pre">AzureConnection.blob_client()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.connection.AzureConnection.container_client"><code class="docutils literal notranslate"><span class="pre">AzureConnection.container_client()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.connection.AzureConnection.from_anything"><code class="docutils literal notranslate"><span class="pre">AzureConnection.from_anything()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azuredol.connection.AzureConnection.service_client"><code class="docutils literal notranslate"><span class="pre">AzureConnection.service_client</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.connection.CredentialLike"><code class="docutils literal notranslate"><span class="pre">CredentialLike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.connection.resolve_credential"><code class="docutils literal notranslate"><span class="pre">resolve_credential()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">azuredol.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">azuredol.functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">azuredol.testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">azuredol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">azuredol.connection</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/azuredol/connection.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-azuredol.connection">
+<span id="azuredol-connection"></span><h1>azuredol.connection<a class="headerlink" href="#module-azuredol.connection" title="Link to this heading"></a></h1>
+<p>Connection-layer for azuredol.</p>
+<p>Owns the expensive resource (<code class="docutils literal notranslate"><span class="pre">BlobServiceClient</span></code>) and the credential cascade.
+See <code class="docutils literal notranslate"><span class="pre">misc/docs/architecture.md</span></code> Layer A and <code class="docutils literal notranslate"><span class="pre">misc/docs/design_decisions.md</span></code> §6.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="azuredol.connection.AzureConnection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.connection.</span></span><span class="sig-name descname"><span class="pre">AzureConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credential</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/connection.html#AzureConnection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.connection.AzureConnection" title="Link to this definition"></a></dt>
+<dd><p>Holds a resolved credential and a lazy <code class="docutils literal notranslate"><span class="pre">BlobServiceClient</span></code>.</p>
+<p>This is the dependency-injection seam for the whole package. Tests construct one
+pointing at Azurite without touching any store class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>credential</strong> – explicit credential object, key string, or SAS string.</p></li>
+<li><p><strong>connection_string</strong> – full connection string (overrides <code class="docutils literal notranslate"><span class="pre">credential</span></code>).</p></li>
+<li><p><strong>account_url</strong> – storage account URL (with or without credential).</p></li>
+<li><p><strong>account_key</strong> – shared-key for the account.</p></li>
+</ul>
+</dd>
+</dl>
+<p>All four args are optional; the credential cascade in
+<code class="docutils literal notranslate"><span class="pre">resolve_credential</span></code> is consulted if none are provided.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.connection.AzureConnection.blob_client">
+<span class="sig-name descname"><span class="pre">blob_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/connection.html#AzureConnection.blob_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.connection.AzureConnection.blob_client" title="Link to this definition"></a></dt>
+<dd><p>Cheap derivation of a <code class="docutils literal notranslate"><span class="pre">BlobClient</span></code> from the shared service client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.connection.AzureConnection.container_client">
+<span class="sig-name descname"><span class="pre">container_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/connection.html#AzureConnection.container_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.connection.AzureConnection.container_client" title="Link to this definition"></a></dt>
+<dd><p>Cheap derivation of a <code class="docutils literal notranslate"><span class="pre">ContainerClient</span></code> from the shared service client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azuredol.connection.AzureConnection.from_anything">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_anything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><span class="pre">AzureConnection</span></a></span></span><a class="reference internal" href="../../_modules/azuredol/connection.html#AzureConnection.from_anything"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.connection.AzureConnection.from_anything" title="Link to this definition"></a></dt>
+<dd><p>Convenience: build an <code class="docutils literal notranslate"><span class="pre">AzureConnection</span></code> from a thing-or-spec.</p>
+<dl class="simple">
+<dt>Accepts:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AzureConnection</span></code> (returned as-is)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BlobServiceClient</span></code> (wrapped without further resolution)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code> (connection string)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dict</span></code> (passed as kwargs)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (defer to env / AAD)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="azuredol.connection.AzureConnection.service_client">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">service_client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">BlobServiceClient</span></span><a class="headerlink" href="#azuredol.connection.AzureConnection.service_client" title="Link to this definition"></a></dt>
+<dd><p>The lazily-constructed <code class="docutils literal notranslate"><span class="pre">BlobServiceClient</span></code>. Cached for the connection’s lifetime.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="azuredol.connection.CredentialLike">
+<span class="sig-prename descclassname"><span class="pre">azuredol.connection.</span></span><span class="sig-name descname"><span class="pre">CredentialLike</span></span><a class="headerlink" href="#azuredol.connection.CredentialLike" title="Link to this definition"></a></dt>
+<dd><p>account-key string, connection string, SAS string, dict of kwargs,
+<code class="docutils literal notranslate"><span class="pre">azure.identity</span></code> credential object, or None (defer to env / DefaultAzureCredential).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any of</p>
+</dd>
+</dl>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.connection.resolve_credential">
+<span class="sig-prename descclassname"><span class="pre">azuredol.connection.</span></span><span class="sig-name descname"><span class="pre">resolve_credential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">credential</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/azuredol/connection.html#resolve_credential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.connection.resolve_credential" title="Link to this definition"></a></dt>
+<dd><p>Resolve a credential into a normalized form that can build a <code class="docutils literal notranslate"><span class="pre">BlobServiceClient</span></code>.</p>
+<p>Cascade (first hit wins):</p>
+<ol class="arabic simple">
+<li><p>Explicit <code class="docutils literal notranslate"><span class="pre">credential=</span></code></p></li>
+<li><p>Explicit <code class="docutils literal notranslate"><span class="pre">connection_string=</span></code></p></li>
+<li><p>Explicit <code class="docutils literal notranslate"><span class="pre">account_url=</span></code> + <code class="docutils literal notranslate"><span class="pre">account_key=</span></code> (or just <code class="docutils literal notranslate"><span class="pre">account_url=</span></code> + AAD)</p></li>
+<li><p>Env var <code class="docutils literal notranslate"><span class="pre">AZURE_STORAGE_CONNECTION_STRING</span></code></p></li>
+<li><p>Env vars <code class="docutils literal notranslate"><span class="pre">AZURE_STORAGE_ACCOUNT_URL</span></code> + <code class="docutils literal notranslate"><span class="pre">AZURE_STORAGE_ACCOUNT_KEY</span></code></p></li>
+<li><p>Env var <code class="docutils literal notranslate"><span class="pre">AZURE_STORAGE_ACCOUNT_URL</span></code> alone + <code class="docutils literal notranslate"><span class="pre">DefaultAzureCredential</span></code></p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{&quot;conn_str&quot;:</span> <span class="pre">&quot;...&quot;}</span></code>                            # for from_connection_string
+<code class="docutils literal notranslate"><span class="pre">{&quot;account_url&quot;:</span> <span class="pre">&quot;...&quot;,</span> <span class="pre">&quot;credential&quot;:</span> <span class="pre">&lt;obj&gt;}</span></code>    # for __init__</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict with one of these shapes</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if no source resolves.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="base.html" class="btn btn-neutral float-left" title="azuredol.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="errors.html" class="btn btn-neutral float-right" title="azuredol.errors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -6,25 +6,26 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>azuredol.functions &mdash; azuredol 0.1.6 documentation</title>
+  <title>azuredol.functions &mdash; azuredol 0.1.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="azuredol.base" href="base.html" /> 
+    <link rel="next" title="azuredol.recipes" href="recipes.html" />
+    <link rel="prev" title="azuredol.errors" href="errors.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,12 +50,15 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../azuredol.html">azuredol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_old_base.html">azuredol._old_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">azuredol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connection.html">azuredol.connection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">azuredol.errors</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">azuredol.functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#azuredol.functions.azure_func_service"><code class="docutils literal notranslate"><span class="pre">azure_func_service()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">azuredol.testing</a></li>
 </ul>
 
         </div>
@@ -86,7 +90,7 @@
 <p>Azure functions tools</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="azuredol.functions.azure_func_service">
-<span class="sig-prename descclassname"><span class="pre">azuredol.functions.</span></span><span class="sig-name descname"><span class="pre">azure_func_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootfolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/functions.html#azure_func_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.functions.azure_func_service" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">azuredol.functions.</span></span><span class="sig-name descname"><span class="pre">azure_func_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootfolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/functions.html#azure_func_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.functions.azure_func_service" title="Link to this definition"></a></dt>
 <dd><p>Context manager to start an Azure Function host using <cite>func start</cite> in the specified folder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -119,7 +123,8 @@ If provided, the context manager waits until a matching log line is detected.</p
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="base.html" class="btn btn-neutral float-left" title="azuredol.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="errors.html" class="btn btn-neutral float-left" title="azuredol.errors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="recipes.html" class="btn btn-neutral float-right" title="azuredol.recipes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

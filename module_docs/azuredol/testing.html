@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>azuredol.testing &mdash; azuredol 0.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="azuredol.recipes" href="recipes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            azuredol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../azuredol.html">azuredol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">azuredol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connection.html">azuredol.connection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">azuredol.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">azuredol.functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">azuredol.testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.testing.azurite"><code class="docutils literal notranslate"><span class="pre">azurite()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.testing.azurite_is_running"><code class="docutils literal notranslate"><span class="pre">azurite_is_running()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.testing.docker_available"><code class="docutils literal notranslate"><span class="pre">docker_available()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.testing.mk_test_store"><code class="docutils literal notranslate"><span class="pre">mk_test_store()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#azuredol.testing.pytest_azurite_connection"><code class="docutils literal notranslate"><span class="pre">pytest_azurite_connection()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">azuredol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">azuredol.testing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/azuredol/testing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-azuredol.testing">
+<span id="azuredol-testing"></span><h1>azuredol.testing<a class="headerlink" href="#module-azuredol.testing" title="Link to this heading"></a></h1>
+<p>Testing helpers for azuredol — Azurite fixture and convenience builders.</p>
+<p>The Azurite-backed pieces require Docker to be available locally. Unit tests that don’t
+need a live container should prototype with <code class="docutils literal notranslate"><span class="pre">dict()</span></code> per the dol convention.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.testing.azurite">
+<span class="sig-prename descclassname"><span class="pre">azuredol.testing.</span></span><span class="sig-name descname"><span class="pre">azurite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/testing.html#azurite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.testing.azurite" title="Link to this definition"></a></dt>
+<dd><p>Context manager that ensures Azurite is running for the duration.</p>
+<p>If Azurite is already up (port 10000 reachable), do nothing on enter/exit.
+Otherwise start it via <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code> and stop it on exit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>container_name</strong> – Docker container name. Random by default.</p></li>
+<li><p><strong>wait</strong> – Max seconds to wait for the blob port to come up.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Azurite connection string.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – if Docker is unavailable and Azurite is not already running.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.testing.azurite_is_running">
+<span class="sig-prename descclassname"><span class="pre">azuredol.testing.</span></span><span class="sig-name descname"><span class="pre">azurite_is_running</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/azuredol/testing.html#azurite_is_running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.testing.azurite_is_running" title="Link to this definition"></a></dt>
+<dd><p>Return True if Azurite’s blob endpoint (port 10000) is reachable.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.testing.docker_available">
+<span class="sig-prename descclassname"><span class="pre">azuredol.testing.</span></span><span class="sig-name descname"><span class="pre">docker_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/azuredol/testing.html#docker_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.testing.docker_available" title="Link to this definition"></a></dt>
+<dd><p>Return True if the <code class="docutils literal notranslate"><span class="pre">docker</span></code> CLI is on PATH.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.testing.mk_test_store">
+<span class="sig-prename descclassname"><span class="pre">azuredol.testing.</span></span><span class="sig-name descname"><span class="pre">mk_test_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_container_if_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#azuredol.base.ContainerStore" title="azuredol.base.ContainerStore"><span class="pre">ContainerStore</span></a></span></span><a class="reference internal" href="../../_modules/azuredol/testing.html#mk_test_store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.testing.mk_test_store" title="Link to this definition"></a></dt>
+<dd><p>Build a <code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code> pointing at Azurite, ready for ad-hoc testing.</p>
+<p>Requires Azurite to be running. Use the <code class="docutils literal notranslate"><span class="pre">azurite(...)</span></code> context manager to ensure it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>container</strong> – Container name. Defaults to a random <code class="docutils literal notranslate"><span class="pre">azuredol-test-*</span></code> name.</p></li>
+<li><p><strong>prefix</strong> – Optional key prefix to scope the store.</p></li>
+<li><p><strong>create_container_if_missing</strong> – Create the container on first use.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.testing.pytest_azurite_connection">
+<span class="sig-prename descclassname"><span class="pre">azuredol.testing.</span></span><span class="sig-name descname"><span class="pre">pytest_azurite_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/azuredol/testing.html#pytest_azurite_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.testing.pytest_azurite_connection" title="Link to this definition"></a></dt>
+<dd><p>Importable as a pytest fixture body. Use it like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">azuredol.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">pytest_azurite_connection</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;session&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">azurite_connection</span><span class="p">():</span>
+    <span class="k">yield from</span> <span class="n">pytest_azurite_connection</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Skips the test session if Azurite cannot be started.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="recipes.html" class="btn btn-neutral float-left" title="azuredol.recipes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

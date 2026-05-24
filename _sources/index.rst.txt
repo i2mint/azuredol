@@ -1,4 +1,4 @@
-Welcome to AzureDOL's documentation!
+Welcome to azuredol's documentation!
 ====================================
 
 

@@ -1,0 +1,234 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>azuredol.errors &mdash; azuredol 0.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            azuredol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol.html">azuredol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/base.html">azuredol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/connection.html">azuredol.connection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/errors.html">azuredol.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/functions.html">azuredol.functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/azuredol/testing.html">azuredol.testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">azuredol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">azuredol.errors</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for azuredol.errors</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Custom exceptions and error-translation decorator for azuredol.</span>
+
+<span class="sd">All Azure SDK exception handling for the Mapping-shaped methods on close-to-metal stores</span>
+<span class="sd">funnels through `translate_azure_errors` so the auth-error vs not-found distinction</span>
+<span class="sd">stays auditable from one place. See ``misc/docs/design_decisions.md`` §4.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">azure.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ResourceNotFoundError</span><span class="p">,</span>
+    <span class="n">ResourceExistsError</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_key</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">key_arg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the user-facing key from *args/**kwargs.</span>
+
+<span class="sd">    Supports either a positional int index OR a name (resolved via the function&#39;s</span>
+<span class="sd">    signature so it works whether the caller passed by position or by keyword).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_arg</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="n">key_arg</span><span class="p">]</span> <span class="k">if</span> <span class="n">key_arg</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">key_arg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key_arg</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key_arg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="BlobNotFoundError">
+<a class="viewcode-back" href="../../module_docs/azuredol/errors.html#azuredol.BlobNotFoundError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlobNotFoundError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a blob does not exist. ``KeyError`` subclass so ``Mapping`` consumers work.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="BlobAlreadyExistsError">
+<a class="viewcode-back" href="../../module_docs/azuredol/errors.html#azuredol.BlobAlreadyExistsError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlobAlreadyExistsError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised on strict-create write attempts when the blob already exists.</span>
+
+<span class="sd">    ``KeyError`` subclass for symmetry with ``BlobNotFoundError`` — both signal a</span>
+<span class="sd">    key-vs-store mismatch.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ContainerNotFoundError">
+<a class="viewcode-back" href="../../module_docs/azuredol/errors.html#azuredol.ContainerNotFoundError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContainerNotFoundError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a container does not exist.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ContainerAlreadyExistsError">
+<a class="viewcode-back" href="../../module_docs/azuredol/errors.html#azuredol.ContainerAlreadyExistsError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContainerAlreadyExistsError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised on strict-create attempts when the container already exists.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ContainerNotEmptyError">
+<a class="viewcode-back" href="../../module_docs/azuredol/errors.html#azuredol.ContainerNotEmptyError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContainerNotEmptyError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised on ``del account_store[name]`` when the container has blobs.</span>
+
+<span class="sd">    The user must call ``account_store.delete(name, force=True)`` to acknowledge the</span>
+<span class="sd">    cascading delete. See ``misc/docs/design_decisions.md`` §12.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="translate_azure_errors">
+<a class="viewcode-back" href="../../module_docs/azuredol/errors.html#azuredol.translate_azure_errors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">translate_azure_errors</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">key_arg</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">not_found_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="ne">KeyError</span><span class="p">]</span> <span class="o">=</span> <span class="n">BlobNotFoundError</span><span class="p">,</span>
+    <span class="n">exists_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="ne">KeyError</span><span class="p">]</span> <span class="o">=</span> <span class="n">BlobAlreadyExistsError</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator: translate Azure SDK exceptions into ``KeyError`` subclasses.</span>
+
+<span class="sd">    Auth errors (``ClientAuthenticationError``) and all other Azure errors propagate</span>
+<span class="sd">    untouched — they are *never* swallowed as &quot;key absent&quot;. See</span>
+<span class="sd">    ``misc/docs/design_decisions.md`` §4.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key_arg: Position (int) or name (str) of the key argument in the wrapped</span>
+<span class="sd">            method&#39;s signature. Used to populate ``KeyError(key)``. The receiver</span>
+<span class="sd">            ``self`` is at index 0, so the user-facing key is typically at index 1</span>
+<span class="sd">            (the default).</span>
+<span class="sd">        not_found_cls: Exception class to raise on ``ResourceNotFoundError``.</span>
+<span class="sd">        exists_cls: Exception class to raise on ``ResourceExistsError``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ResourceNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">_extract_key</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">key_arg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">not_found_cls</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="k">except</span> <span class="n">ResourceExistsError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">_extract_key</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">key_arg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">exists_cls</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="c1"># Everything else (ClientAuthenticationError, HttpResponseError,</span>
+            <span class="c1"># ServiceRequestError, ServiceResponseError, ...) propagates.</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
