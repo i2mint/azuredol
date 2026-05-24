@@ -269,7 +269,9 @@ class BlobHandle:
 
     # ---- core ops ----
 
-    def read(self, *, offset: Optional[int] = None, length: Optional[int] = None) -> bytes:
+    def read(
+        self, *, offset: Optional[int] = None, length: Optional[int] = None
+    ) -> bytes:
         """Download (possibly a range) and return bytes."""
         return self.client.download_blob(offset=offset, length=length).readall()
 
@@ -293,7 +295,9 @@ class BlobHandle:
             kwargs["content_settings"] = ContentSettings(content_type=content_type)
         if metadata is not None:
             kwargs["metadata"] = metadata
-        self.client.upload_blob(data, blob_type=blob_type, overwrite=overwrite, **kwargs)
+        self.client.upload_blob(
+            data, blob_type=blob_type, overwrite=overwrite, **kwargs
+        )
 
     def create(self, data, *, overwrite: bool = False, **kwargs) -> None:
         """Strict-create variant of ``write``; raises ``BlobAlreadyExistsError`` on conflict."""
@@ -383,7 +387,9 @@ class _AccountStoreBase:
         self._container_store_kwargs = dict(container_store_kwargs or {})
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(account={self._service_client.account_name!r})"
+        return (
+            f"{self.__class__.__name__}(account={self._service_client.account_name!r})"
+        )
 
 
 class AccountCollection(_AccountStoreBase, KvReader):

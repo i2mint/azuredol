@@ -158,7 +158,9 @@ def pytest_azurite_connection():
         return
 
     if not docker_available():
-        pytest.skip("Azurite is not running and Docker is unavailable.", allow_module_level=True)
+        pytest.skip(
+            "Azurite is not running and Docker is unavailable.", allow_module_level=True
+        )
 
     with azurite() as conn_str:
         yield AzureConnection(connection_string=conn_str)

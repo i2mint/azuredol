@@ -12,7 +12,7 @@ import shlex
 @contextlib.contextmanager
 def azure_func_service(
     rootfolder,
-    extra_args='',
+    extra_args="",
     *,
     verbose=True,
     wait_for_log=None,
@@ -39,7 +39,7 @@ def azure_func_service(
             ...
     """
     # Construct the command to start the function host.
-    cmd = ['func', 'start']
+    cmd = ["func", "start"]
     if extra_args:
         cmd.extend(shlex.split(extra_args))
 
@@ -98,4 +98,4 @@ def azure_func_service(
         proc.terminate()
         proc.wait()
         if verbose:
-            print('Azure Function service stopped.')
+            print("Azure Function service stopped.")

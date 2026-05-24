@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "azuredol"
-version = "0.1.7"
+version = "0.1.9"
 description = "Azure Storage Data Object Layer"
 readme = "README.md"
 requires-python = ">=3.10"
