@@ -108,8 +108,8 @@ s3dol's `S3ClientDol.__delitem__` deletes every blob in the bucket then the buck
 This is convenient and *dangerous*. We refuse it:
 
 ```python
-del account_store['container_name']   # → raises if container is not empty
-account_store.delete('container_name', force=True)   # explicit, documented
+del account_store["container_name"]  # → raises if container is not empty
+account_store.delete("container_name", force=True)  # explicit, documented
 ```
 
 ## 13. `azure_func_service` (Azure Functions) lives in `functions.py`, unchanged

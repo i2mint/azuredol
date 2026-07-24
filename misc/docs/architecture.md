@@ -109,11 +109,12 @@ AzureJsonStore = wrap_kvs(ContainerStore, value_codec=ValueCodecs.json())
 AzurePickleStore = wrap_kvs(ContainerStore, value_codec=ValueCodecs.pickle())
 
 # Filter by suffix
-AzureJsonFiles = Pipe(KeyCodecs.suffixed('.json'), ValueCodecs.json())(ContainerStore)
+AzureJsonFiles = Pipe(KeyCodecs.suffixed(".json"), ValueCodecs.json())(ContainerStore)
 
 # Text values (drop-in for the old AzureTextFiles)
-AzureTextStore = wrap_kvs(ContainerStore, obj_of_data=lambda b: b.decode(),
-                                          data_of_obj=lambda s: s.encode())
+AzureTextStore = wrap_kvs(
+    ContainerStore, obj_of_data=lambda b: b.decode(), data_of_obj=lambda s: s.encode()
+)
 
 # Append-blob variant
 AppendBlobStore = partial(ContainerStore, blob_type=BlobType.AppendBlob)
@@ -157,9 +158,9 @@ A small `@translate_azure_errors(key_arg=...)` decorator does the `ResourceNotFo
 `mk_relative_path_store(prefix_attr='prefix')`. As a result:
 
 ```python
-store = azure_store('mycontainer', prefix='logs/')
-store['2026/05/22.log']    # blob path = 'logs/2026/05/22.log'
-sub = store['2026/']       # → ContainerStore with prefix='logs/2026/'  (zero round-trips)
+store = azure_store("mycontainer", prefix="logs/")
+store["2026/05/22.log"]  # blob path = 'logs/2026/05/22.log'
+sub = store["2026/"]  # → ContainerStore with prefix='logs/2026/'  (zero round-trips)
 ```
 
 The `s['prefix/']` → sub-store convention is delegated to `dol`. We do **not** reimplement

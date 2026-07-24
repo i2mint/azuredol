@@ -55,7 +55,8 @@ from azuredol.base import ContainerStore
 
 # Right way: compose
 AzureJsonStore = wrap_kvs(ContainerStore, value_codec=ValueCodecs.json())
-AzureJsonFiles = Pipe(KeyCodecs.suffixed('.json'), ValueCodecs.json())(ContainerStore)
+AzureJsonFiles = Pipe(KeyCodecs.suffixed(".json"), ValueCodecs.json())(ContainerStore)
+
 
 # Wrong way: subclass
 class AzureJsonStore(ContainerStore):  # don't do this
