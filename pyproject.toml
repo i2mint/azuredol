@@ -10,19 +10,31 @@ version = "0.1.13"
 description = "Azure Storage Data Object Layer"
 readme = "README.md"
 requires-python = ">=3.10"
+license = "Apache-2.0"
 keywords = [
     "azure",
-    "storage",
+    "azure-storage",
     "blob",
+    "storage",
+    "data-access",
+    "dol",
 ]
-authors = []
+authors = [
+    { name = "Thor Whalen" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Filesystems",
+]
 dependencies = [
     "dol",
     "azure-storage-blob",
 ]
-
-[project.license]
-text = "Apache-2.0"
 
 [project.urls]
 Homepage = "https://github.com/i2mint/azuredol"
@@ -79,7 +91,7 @@ convention = "google"
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = [
-    "tests",
+    "azuredol",
 ]
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
