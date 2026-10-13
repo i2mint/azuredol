@@ -43,9 +43,11 @@ _MOVED = (
     "own prefix) when called through a dol wrapper (i2mint/azuredol#4). Use {new}, {alt}."
 )
 
-# The container id a ``azuredol.ops.delete_container`` call authorises ``__delitem__`` to
-# cascade-delete (blobs first). ``None`` (the default) means: refuse non-empty containers.
-_CASCADE_ID: ContextVar[Optional[str]] = ContextVar("azuredol_cascade_id", default=None)
+# The (account leaf, container id) a ``azuredol.ops.delete_container`` call authorises
+# ``__delitem__`` to cascade-delete (blobs first), so no other account is affected. ``None`` (the default) means: refuse non-empty containers.
+_CASCADE_ID: ContextVar[Optional[tuple]] = ContextVar(
+    "azuredol_cascade_id", default=None
+)  # (id(account leaf), container name)
 
 
 # ---------------------------------------------------------------------------
@@ -471,7 +473,7 @@ class AccountStore(AccountReader, KvPersister):
         if not cc.exists():
             raise ContainerNotFoundError(k)
         # Refuse non-empty containers; force-delete is opt-in via azuredol.ops.delete_container(store, name, force=True).
-        if _CASCADE_ID.get() == k:
+        if _CASCADE_ID.get() == (id(self), k):
             for blob in cc.list_blobs():
                 cc.delete_blob(blob.name)
         try:

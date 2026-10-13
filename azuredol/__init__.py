@@ -46,6 +46,7 @@ from azuredol.recipes import (
     AzurePickleStore,
     AzureTextStore,
     azure_store,
+    typed_codec,
     typed_store,
 )
 from azuredol.ops import delete_container, walk as walk_container
@@ -78,6 +79,7 @@ __all__ = [
     "AzureTextStore",
     "azure_store",
     "typed_store",
+    "typed_codec",
     # key-aware free functions (work through dol wrappers)
     "delete_container",
     "walk_container",

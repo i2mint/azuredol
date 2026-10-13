@@ -167,3 +167,36 @@ def test_walk_scope_includes_key_codec_prefix():
     assert list(leaf.walk_ids()) == [("walk", "logs/", "/")]
     with pytest.raises(AttributeError, match="azuredol.ops.walk"):
         leaf.walk()
+
+
+def test_cascade_authorisation_is_per_account():
+    acct, ccs = mk_account({"logs": {"x": b"1"}})
+    other, other_ccs = mk_account({"logs": {"y": b"2"}})
+    from dol import Store
+
+    class Mirror(Store):
+        def __delitem__(self, k):
+            del self.store[k]
+            del other[k]  # a second account, same name, same call
+
+    with pytest.raises(ContainerNotEmptyError):
+        delete_container(Mirror(acct), "logs", force=True)
+    assert "logs" in other_ccs and other_ccs["logs"].blobs == {"y": b"2"}
+
+
+def test_walk_refuses_non_prefix_codec():
+    cc = mk_container()
+    leaf = ContainerStore(cc, prefix="logs/")
+    with pytest.raises(ValueError, match="prefix"):
+        walk_container(KeyCodecs.suffixed(".json")(leaf))
+
+
+def test_typed_codec_decorator_for_azure_store():
+    import json
+
+    from azuredol import typed_codec
+
+    cls = typed_codec(json.loads, lambda o: json.dumps(o).encode())(ContainerStore)
+    cc = mk_container(blobs={"p/d/a": b"[1]"})
+    s = cls(cc, prefix="p/")
+    assert s["d/"]["a"] == [1]

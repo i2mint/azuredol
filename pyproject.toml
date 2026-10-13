@@ -32,7 +32,7 @@ classifiers = [
     "Topic :: System :: Filesystems",
 ]
 dependencies = [
-    "dol",
+    "dol>=0.3.59",  # inner_most_key(default=...), exported from dol (azuredol.ops)
     "azure-storage-blob",
 ]
 

@@ -20,8 +20,8 @@ from azuredol.connection import AzureConnection
 # Typed-value stores (codec wrappers)
 # ---------------------------------------------------------------------------
 
-def typed_store(decode: Callable, encode: Callable):
-    """A ``ContainerStore`` class whose values are ``decode(bytes)`` / ``encode(obj) -> bytes``.
+def typed_store(decode: Callable, encode: Callable, *, base: type = ContainerStore):
+    """A ``base`` (default ``ContainerStore``) class with values ``decode(bytes)`` / ``encode(obj) -> bytes``.
 
     Unlike a bare ``wrap_kvs(ContainerStore, obj_of_data=..., data_of_obj=...)``, the trailing-slash
     sub-store convention keeps working: ``store['2026/']`` comes back as a sub-store of the
@@ -33,8 +33,19 @@ def typed_store(decode: Callable, encode: Callable):
             return cls(**x._init_kwargs())
         return decode(x)
 
-    cls = wrap_kvs(ContainerStore, obj_of_data=obj_of_data, data_of_obj=encode)
+    cls = wrap_kvs(base, obj_of_data=obj_of_data, data_of_obj=encode)
     return cls
+
+
+def typed_codec(decode: Callable, encode: Callable) -> Callable:
+    """``typed_store`` as a class decorator: the shape ``azure_store(value_codec=...)`` takes.
+
+    >>> import json
+    >>> codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())
+    >>> callable(codec)
+    True
+    """
+    return lambda base: typed_store(decode, encode, base=base)
 
 
 # Note: do NOT use `bytes.decode` directly as `obj_of_data` — known dol issue (#9).
@@ -110,7 +121,8 @@ def azure_store(
         create_container_if_missing: Create the container on first use if absent.
         blob_type: Default blob type for writes.
         value_codec: A decorator that, given a class, returns a wrapped class. Typically
-            a partially-applied ``dol.wrap_kvs(...)``. When None (default), bytes pass
+            ``typed_codec(decode, encode)``. A bare ``dol.wrap_kvs(...)`` breaks the
+            trailing-slash sub-store (i2mint/azuredol#4). When None (default), bytes pass
             through.
 
     Returns:

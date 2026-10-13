@@ -64,10 +64,10 @@ def delete_container(store, name: str, *, force: bool = False) -> None:
     :raises ContainerNotFoundError: if ``name`` is not a container of ``store``
     :raises ContainerNotEmptyError: if the container has blobs and ``force`` is false
     """
-    _leaf_of(store, AccountStore)  # fail early if this is not an account store
+    leaf = _leaf_of(store, AccountStore)  # fail early if this is not an account store
     if name not in store:  # one point read through the outer store: scope + key mapping
         raise ContainerNotFoundError(name)
-    token = _CASCADE_ID.set(_inner_key(store, name) if force else None)
+    token = _CASCADE_ID.set((id(leaf), _inner_key(store, name)) if force else None)
     try:
         del store[name]
     finally:
@@ -78,9 +78,16 @@ def walk(store, delimiter: str = "/") -> Iterator[Any]:
     """Hierarchical walk (``BlobProperties`` / ``BlobPrefix`` nodes) of ``store``'s own scope.
 
     The scope is the blob prefix the caller's empty key resolves to, so a key codec's prefix
-    is included (unlike ``ContainerCollection.walk_ids``, which sees only the leaf's prefix).
+    is included (a codec that is not a pure prefix, e.g. a suffix, raises ``ValueError``; unlike ``ContainerCollection.walk_ids``, which sees only the leaf's prefix).
     """
     leaf = _leaf_of(store, ContainerCollection)
+    scope = _inner_key(store, "")
+    if _inner_key(store, "probe") != scope + "probe":
+        raise ValueError(
+            "walk needs a store whose key codec only adds a prefix: this one maps the empty "
+            f"key to {scope!r} but 'probe' to {_inner_key(store, 'probe')!r}. Use "
+            "walk_ids() on the leaf, or iterate the store."
+        )
     return leaf._container_client.walk_blobs(
-        name_starts_with=_inner_key(store, ""), delimiter=delimiter
+        name_starts_with=scope, delimiter=delimiter
     )
