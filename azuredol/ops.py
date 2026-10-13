@@ -39,6 +39,7 @@ from azuredol.base import (
     ContainerCollection,
     ContainerReader,
     _CASCADE_ID,
+    _ContainerStoreBase,
 )
 from azuredol.errors import ContainerNotFoundError
 
@@ -114,7 +115,7 @@ def walk(store, delimiter: str = "/") -> Iterator[Any]:
 def substore(store, key: str):
     """The sub-store of ``store`` under ``key`` (a key ending in ``'/'``), as the caller sees it.
 
-    ``substore(store, 'a/')[k]`` is ``store['a/' + k]`` for every wrapper stack on ``store``.
+    ``substore(store, 'a/')[k]`` is ``store['a/' + k]`` for every wrapper stack on ``store`` (up to the key limits below).
     On a bare ``ContainerStore`` it is the cheap, server-scoped ``store['a/']`` (listing only
     ``a/``'s blobs). On anything wrapped (a ``dol`` key/value codec or scope, including the
     classes ``typed_store``/``AzureJsonStore`` build) it is a ``KeyCodecs.prefixed(key)`` view
@@ -123,12 +124,26 @@ def substore(store, key: str):
     wrapped as an instance is minted by the innermost class and does not know about the
     wrappers: i2mint/azuredol#6.)
 
+        The cheap path needs a leaf that does not override ``_id_of_key`` (a subclass that maps keys
+    gets the view). Attribute lookups on the view fall through to the wrapped store, so
+    ``.prefix`` and ``.walk_ids()`` of a view describe the parent's scope: use
+    :func:`walk` on it. Needs ``dol>=0.3.75`` (its prefix view skips out-of-scope keys when
+    iterating).
+
     :param store: a ``ContainerReader``/``ContainerStore``, wrapped or not
-    :param key: a non-empty key ending in ``'/'``
+    :param key: a key ending in ``'/'``, without a leading ``'/'`` or an inner ``'//'``
     """
-    if not isinstance(key, str) or not key.endswith("/") or key == "/":
-        raise ValueError(f"A sub-store key must be a non-empty str ending in '/': {key!r}")
+    if (
+        not isinstance(key, str)
+        or not key.endswith("/")
+        or key.startswith("/")
+        or "//" in key
+    ):
+        raise ValueError(
+            "A sub-store key must be a str ending in '/', without a leading '/' or '//' "
+            f"inside (the leaf would normalise them differently): {key!r}"
+        )
     leaf = _leaf_of(store, ContainerReader)
-    if store is leaf:
+    if store is leaf and type(leaf)._id_of_key is _ContainerStoreBase._id_of_key:
         return leaf._with(prefix=leaf._id_of_key(key))
     return KeyCodecs.prefixed(key)(store)

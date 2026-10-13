@@ -294,7 +294,7 @@ def test_substore_through_prefix_codec_and_scope():
     assert sorted(substore(ContainerStore(cc, prefix="p/"), "2027/")) == ["a.json"]
 
 
-@pytest.mark.parametrize("bad", ["", "/", "2026", None])
+@pytest.mark.parametrize("bad", ["", "/", "2026", None, "//", "a//", "/a/"])
 def test_substore_refuses_malformed_key(bad):
     with pytest.raises(ValueError, match="sub-store key"):
         substore(ContainerStore(mk_container(), prefix="p/"), bad)
@@ -303,3 +303,23 @@ def test_substore_refuses_malformed_key(bad):
 def test_substore_refuses_opaque_layer():
     with pytest.raises(TypeError, match="_id_of_key"):
         substore(_Opaque(ContainerStore(mk_container(), prefix="p/"), "x/"), "a/")
+
+
+def test_substore_of_a_leaf_subclass_that_maps_keys_uses_the_view():
+    class Suffixed(ContainerStore):
+        def _id_of_key(self, k):
+            return super()._id_of_key(k) + ".json"
+
+        def _key_of_id(self, i):
+            return super()._key_of_id(i)[: -len(".json")]
+
+    cc = mk_container(blobs=_blobs())
+    s = Suffixed(cc, prefix="p/")
+    assert s["2026/a"] == b'{"n": 1}'
+    assert substore(s, "2026/")["a"] == b'{"n": 1}'
+
+
+def test_substore_reads_the_same_blob_through_stacked_prefix_codec():
+    cc = mk_container(blobs={"p/x/2026/a": b"1"})
+    view = KeyCodecs.prefixed("x/")(ContainerStore(cc, prefix="p/"))
+    assert substore(view, "2026/")["a"] == view["2026/a"] == b"1"
