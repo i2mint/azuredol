@@ -38,9 +38,21 @@ from azuredol.errors import ContainerNotFoundError
 
 
 def _leaf_of(store, cls):
-    """The innermost layer of ``store`` that is an instance of ``cls``."""
+    """The innermost layer of ``store`` that is an instance of ``cls``.
+
+    Every wrapper layer above it must define ``_id_of_key`` (dol's ``Store`` layers do): a
+    layer that maps keys without it cannot be resolved by ``inner_most_key``, which would then
+    hand back an unmapped key and act on the wrong blob/container, so it is refused
+    (``TypeError``; i2mint/azuredol#7).
+    """
     cur, seen = store, set()
     while not isinstance(cur, cls):
+        if not hasattr(cur, "_id_of_key"):
+            raise TypeError(
+                f"{type(cur).__name__} wraps a {cls.__name__} but defines no _id_of_key, so "
+                "keys cannot be resolved through it; build wrappers with dol (Store, "
+                "wrap_kvs, KeyCodecs, ...)."
+            )
         inner = getattr(cur, "store", None)
         if inner is None or id(cur) in seen:
             raise TypeError(f"{type(store).__name__} does not wrap a {cls.__name__}")

@@ -200,3 +200,32 @@ def test_typed_codec_decorator_for_azure_store():
     cc = mk_container(blobs={"p/d/a": b"[1]"})
     s = cls(cc, prefix="p/")
     assert s["d/"]["a"] == [1]
+
+
+# ---- 4. wrapper layers that cannot be resolved are refused (i2mint/azuredol#7) -------
+
+
+class _Opaque:
+    """A hand-rolled wrapper that maps keys but has no ``_id_of_key``."""
+
+    def __init__(self, store, prefix):
+        self.store, self.prefix = store, prefix
+
+    def __contains__(self, k):
+        return self.prefix + k in self.store
+
+    def __delitem__(self, k):
+        del self.store[self.prefix + k]
+
+
+def test_delete_container_refuses_layer_without_id_of_key():
+    acct, ccs = mk_account({"tenantA-logs": {"keep": b"A"}, "logs": {"prod": b"!"}})
+    with pytest.raises(TypeError, match="_id_of_key"):
+        delete_container(_Opaque(acct, "tenantA-"), "logs", force=True)
+    assert set(ccs) == {"tenantA-logs", "logs"}  # nothing was deleted
+
+
+def test_walk_refuses_layer_without_id_of_key():
+    leaf = ContainerStore(mk_container(), prefix="logs/")
+    with pytest.raises(TypeError, match="_id_of_key"):
+        walk_container(_Opaque(leaf, "2026/"))
