@@ -25,6 +25,7 @@ escapes the cascade authorisation (the delete is then refused as non-empty, neve
 
 from __future__ import annotations
 
+import inspect
 from typing import Any, Iterator
 
 from dol import inner_most_key
@@ -47,7 +48,7 @@ def _leaf_of(store, cls):
     """
     cur, seen = store, set()
     while not isinstance(cur, cls):
-        if not hasattr(cur, "_id_of_key"):
+        if not callable(inspect.getattr_static(cur, "_id_of_key", None)):  # not via __getattr__
             raise TypeError(
                 f"{type(cur).__name__} wraps a {cls.__name__} but defines no _id_of_key, so "
                 "keys cannot be resolved through it; build wrappers with dol (Store, "

@@ -229,3 +229,16 @@ def test_walk_refuses_layer_without_id_of_key():
     leaf = ContainerStore(mk_container(), prefix="logs/")
     with pytest.raises(TypeError, match="_id_of_key"):
         walk_container(_Opaque(leaf, "2026/"))
+
+
+class _Delegating(_Opaque):
+    """Forwards unknown attributes to the inner store: its ``_id_of_key`` is the leaf's."""
+
+    def __getattr__(self, name):
+        return getattr(self.store, name)
+
+
+def test_layers_that_only_delegate_id_of_key_are_refused():
+    leaf = ContainerStore(mk_container(), prefix="logs/")
+    with pytest.raises(TypeError, match="_id_of_key"):
+        walk_container(_Delegating(leaf, "2026/"))
