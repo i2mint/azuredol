@@ -49,7 +49,7 @@ from azuredol.recipes import (
     typed_codec,
     typed_store,
 )
-from azuredol.ops import delete_container, walk as walk_container
+from azuredol.ops import delete_container, substore, walk as walk_container
 from azuredol.functions import azure_func_service
 
 
@@ -83,6 +83,7 @@ __all__ = [
     # key-aware free functions (work through dol wrappers)
     "delete_container",
     "walk_container",
+    "substore",
     # functions
     "azure_func_service",
 ]
