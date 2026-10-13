@@ -35,6 +35,7 @@ See `misc/docs/architecture.md` for the layered design.
 | [`typed_codec`](#azuredol.typed_codec)(decode, encode)                       | `typed_store` as a class decorator: the shape `azure_store(value_codec=...)` takes.             |
 | [`delete_container`](#azuredol.delete_container)(store, name, \*[, force])        | Delete container `name` (a key of `store`); with `force=True` cascade-delete its blobs.         |
 | [`walk_container`](#azuredol.walk_container)(store[, delimiter])                | Hierarchical walk (`BlobProperties` / `BlobPrefix` nodes) of `store`'s own scope.               |
+| [`substore`](#azuredol.substore)(store, key)                              | The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.            |
 | [`azure_func_service`](#azuredol.azure_func_service)(rootfolder[, extra_args, ...]) | Context manager to start an Azure Function host using `func start` in the specified folder.     |
 
 ### Classes
@@ -389,6 +390,30 @@ Cascade (first hit wins):
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 * **Raises:**
   [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – if no source resolves.
+
+### azuredol.substore(store, key)
+
+The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.
+
+`substore(store, 'a/')[k]` is `store['a/' + k]` for every wrapper stack on `store` (up to the key limits below).
+On a bare `ContainerStore` it is the cheap, server-scoped `store['a/']` (listing only
+`a/`’s blobs). On anything wrapped (a `dol` key/value codec or scope, including the
+classes `typed_store`/`AzureJsonStore` build) it is a `KeyCodecs.prefixed(key)` view
+*of that store*, so the caller’s key and value mappings still apply; that view lists the
+wrapped store’s whole scope and keeps the keys under `key`. (`store['a/']` on a store
+wrapped as an instance is minted by the innermost class and does not know about the
+wrappers: i2mint/azuredol#6.)
+
+> The cheap path needs a leaf that does not override `_id_of_key` (a subclass that maps keys
+
+gets the view). Attribute lookups on the view fall through to the wrapped store, so
+`.prefix` and `.walk_ids()` of a view describe the parent’s scope: use
+`walk()` on it. Needs `dol>=0.3.75` (its prefix view skips out-of-scope keys when
+iterating).
+
+* **Parameters:**
+  * **store** – a `ContainerReader`/`ContainerStore`, wrapped or not
+  * **key** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – a key ending in `'/'`, without a leading `'/'` or an inner `'//'`
 
 ### azuredol.translate_azure_errors(\*, key_arg=0, not_found_cls=<class 'azuredol.errors.BlobNotFoundError'>, exists_cls=<class 'azuredol.errors.BlobAlreadyExistsError'>)
 

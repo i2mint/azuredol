@@ -15,6 +15,7 @@
       typed_codec
       delete_container
       walk_container
+      substore
       azure_func_service
    
    .. rubric:: Classes

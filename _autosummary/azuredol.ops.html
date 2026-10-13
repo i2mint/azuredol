@@ -90,6 +90,7 @@ data-aria-dark="Switch to auto color mode">
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#azuredol.ops.delete_container"><code class="docutils literal notranslate"><span class="pre">delete_container()</span></code></a></li>
+<li><a class="reference internal" href="#azuredol.ops.substore"><code class="docutils literal notranslate"><span class="pre">substore()</span></code></a></li>
 <li><a class="reference internal" href="#azuredol.ops.walk"><code class="docutils literal notranslate"><span class="pre">walk()</span></code></a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
@@ -144,6 +145,9 @@ caller’s store, with a context-scoped authorisation to cascade for that one co
 Key mapping, read-only wrappers and scope checks (<code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">in</span> <span class="pre">store</span></code>) are the layers’ own.</p></li>
 <li><p><a class="reference internal" href="#azuredol.ops.walk" title="azuredol.ops.walk"><code class="xref py py-func docutils literal notranslate"><span class="pre">walk()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(store,</span> <span class="pre">delimiter)</span></code>: <code class="docutils literal notranslate"><span class="pre">walk_blobs</span></code> over the prefix the <em>caller’s</em> empty
 key resolves to (leaf prefix + any key codec).</p></li>
+<li><p><a class="reference internal" href="#azuredol.ops.substore" title="azuredol.ops.substore"><code class="xref py py-func docutils literal notranslate"><span class="pre">substore()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(store,</span> <span class="pre">key)</span></code>: the sub-store <code class="docutils literal notranslate"><span class="pre">store['2026/']</span></code> is meant to be, built
+through the caller’s own store (i2mint/azuredol#6): <code class="docutils literal notranslate"><span class="pre">substore(store,</span> <span class="pre">'a/')[k]</span></code> is always
+<code class="docutils literal notranslate"><span class="pre">store['a/'</span> <span class="pre">+</span> <span class="pre">k]</span></code>, whatever wrappers (key or value codecs, scopes) sit on <code class="docutils literal notranslate"><span class="pre">store</span></code>.</p></li>
 </ul>
 <p>The removed methods (<code class="docutils literal notranslate"><span class="pre">AccountStore.delete</span></code>, <code class="docutils literal notranslate"><span class="pre">ContainerCollection.walk</span></code>) now raise an
 <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code> naming their replacement. This is the design of cosmodol.ops and s3dol’s
@@ -159,7 +163,10 @@ escapes the cascade authorisation (the delete is then refused as non-empty, neve
 <tr class="row-odd"><td><p><a class="reference internal" href="#azuredol.ops.delete_container" title="azuredol.ops.delete_container"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_container</span></code></a>(store, name, *[, force])</p></td>
 <td><p>Delete container <code class="docutils literal notranslate"><span class="pre">name</span></code> (a key of <code class="docutils literal notranslate"><span class="pre">store</span></code>); with <code class="docutils literal notranslate"><span class="pre">force=True</span></code> cascade-delete its blobs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#azuredol.ops.walk" title="azuredol.ops.walk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk</span></code></a>(store[, delimiter])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#azuredol.ops.substore" title="azuredol.ops.substore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">substore</span></code></a>(store, key)</p></td>
+<td><p>The sub-store of <code class="docutils literal notranslate"><span class="pre">store</span></code> under <code class="docutils literal notranslate"><span class="pre">key</span></code> (a key ending in <code class="docutils literal notranslate"><span class="pre">'/'</span></code>), as the caller sees it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#azuredol.ops.walk" title="azuredol.ops.walk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk</span></code></a>(store[, delimiter])</p></td>
 <td><p>Hierarchical walk (<code class="docutils literal notranslate"><span class="pre">BlobProperties</span></code> / <code class="docutils literal notranslate"><span class="pre">BlobPrefix</span></code> nodes) of <code class="docutils literal notranslate"><span class="pre">store</span></code>'s own scope.</p></td>
 </tr>
 </tbody>
@@ -180,6 +187,35 @@ escapes the cascade authorisation (the delete is then refused as non-empty, neve
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.ops.substore">
+<span class="sig-prename descclassname"><span class="pre">azuredol.ops.</span></span><span class="sig-name descname"><span class="pre">substore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/azuredol/ops.html#substore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.ops.substore" title="Link to this definition">#</a></dt>
+<dd><p>The sub-store of <code class="docutils literal notranslate"><span class="pre">store</span></code> under <code class="docutils literal notranslate"><span class="pre">key</span></code> (a key ending in <code class="docutils literal notranslate"><span class="pre">'/'</span></code>), as the caller sees it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">substore(store,</span> <span class="pre">'a/')[k]</span></code> is <code class="docutils literal notranslate"><span class="pre">store['a/'</span> <span class="pre">+</span> <span class="pre">k]</span></code> for every wrapper stack on <code class="docutils literal notranslate"><span class="pre">store</span></code> (up to the key limits below).
+On a bare <code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code> it is the cheap, server-scoped <code class="docutils literal notranslate"><span class="pre">store['a/']</span></code> (listing only
+<code class="docutils literal notranslate"><span class="pre">a/</span></code>’s blobs). On anything wrapped (a <code class="docutils literal notranslate"><span class="pre">dol</span></code> key/value codec or scope, including the
+classes <code class="docutils literal notranslate"><span class="pre">typed_store</span></code>/<code class="docutils literal notranslate"><span class="pre">AzureJsonStore</span></code> build) it is a <code class="docutils literal notranslate"><span class="pre">KeyCodecs.prefixed(key)</span></code> view
+<em>of that store</em>, so the caller’s key and value mappings still apply; that view lists the
+wrapped store’s whole scope and keeps the keys under <code class="docutils literal notranslate"><span class="pre">key</span></code>. (<code class="docutils literal notranslate"><span class="pre">store['a/']</span></code> on a store
+wrapped as an instance is minted by the innermost class and does not know about the
+wrappers: i2mint/azuredol#6.)</p>
+<blockquote>
+<div><p>The cheap path needs a leaf that does not override <code class="docutils literal notranslate"><span class="pre">_id_of_key</span></code> (a subclass that maps keys</p>
+</div></blockquote>
+<p>gets the view). Attribute lookups on the view fall through to the wrapped store, so
+<code class="docutils literal notranslate"><span class="pre">.prefix</span></code> and <code class="docutils literal notranslate"><span class="pre">.walk_ids()</span></code> of a view describe the parent’s scope: use
+<a class="reference internal" href="#azuredol.ops.walk" title="azuredol.ops.walk"><code class="xref py py-func docutils literal notranslate"><span class="pre">walk()</span></code></a> on it. Needs <code class="docutils literal notranslate"><span class="pre">dol&gt;=0.3.75</span></code> (its prefix view skips out-of-scope keys when
+iterating).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>store</strong> – a <code class="docutils literal notranslate"><span class="pre">ContainerReader</span></code>/<code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code>, wrapped or not</p></li>
+<li><p><strong>key</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – a key ending in <code class="docutils literal notranslate"><span class="pre">'/'</span></code>, without a leading <code class="docutils literal notranslate"><span class="pre">'/'</span></code> or an inner <code class="docutils literal notranslate"><span class="pre">'//'</span></code></p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -239,7 +275,7 @@ is included (a codec that is not a pure prefix, e.g. a suffix, raises <code clas
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=e2f3408e"></script>
+      <script src="../_static/documentation_options.js?v=d50bcae4"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

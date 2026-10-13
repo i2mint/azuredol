@@ -14,6 +14,9 @@ A free function is handed the outer store, so it resolves the key through every 
   Key mapping, read-only wrappers and scope checks (`name in store`) are the layers’ own.
 - [`walk()`](#azuredol.ops.walk) `(store, delimiter)`: `walk_blobs` over the prefix the *caller’s* empty
   key resolves to (leaf prefix + any key codec).
+- [`substore()`](#azuredol.ops.substore) `(store, key)`: the sub-store `store['2026/']` is meant to be, built
+  through the caller’s own store (i2mint/azuredol#6): `substore(store, 'a/')[k]` is always
+  `store['a/' + k]`, whatever wrappers (key or value codecs, scopes) sit on `store`.
 
 The removed methods (`AccountStore.delete`, `ContainerCollection.walk`) now raise an
 `AttributeError` naming their replacement. This is the design of cosmodol.ops and s3dol’s
@@ -28,6 +31,7 @@ escapes the cascade authorisation (the delete is then refused as non-empty, neve
 
 | [`delete_container`](#azuredol.ops.delete_container)(store, name, \*[, force])   | Delete container `name` (a key of `store`); with `force=True` cascade-delete its blobs.   |
 |-----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| [`substore`](#azuredol.ops.substore)(store, key)                         | The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.      |
 | [`walk`](#azuredol.ops.walk)(store[, delimiter])                     | Hierarchical walk (`BlobProperties` / `BlobPrefix` nodes) of `store`'s own scope.         |
 
 ### azuredol.ops.delete_container(store, name, , force=False)
@@ -42,6 +46,30 @@ The deletion is `del store[name]` on the caller’s own store, so a key codec ma
   * [**ContainerNotEmptyError**](azuredol.html.md#azuredol.ContainerNotEmptyError) – if the container has blobs and `force` is false
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
+### azuredol.ops.substore(store, key)
+
+The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.
+
+`substore(store, 'a/')[k]` is `store['a/' + k]` for every wrapper stack on `store` (up to the key limits below).
+On a bare `ContainerStore` it is the cheap, server-scoped `store['a/']` (listing only
+`a/`’s blobs). On anything wrapped (a `dol` key/value codec or scope, including the
+classes `typed_store`/`AzureJsonStore` build) it is a `KeyCodecs.prefixed(key)` view
+*of that store*, so the caller’s key and value mappings still apply; that view lists the
+wrapped store’s whole scope and keeps the keys under `key`. (`store['a/']` on a store
+wrapped as an instance is minted by the innermost class and does not know about the
+wrappers: i2mint/azuredol#6.)
+
+> The cheap path needs a leaf that does not override `_id_of_key` (a subclass that maps keys
+
+gets the view). Attribute lookups on the view fall through to the wrapped store, so
+`.prefix` and `.walk_ids()` of a view describe the parent’s scope: use
+[`walk()`](#azuredol.ops.walk) on it. Needs `dol>=0.3.75` (its prefix view skips out-of-scope keys when
+iterating).
+
+* **Parameters:**
+  * **store** – a `ContainerReader`/`ContainerStore`, wrapped or not
+  * **key** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – a key ending in `'/'`, without a leading `'/'` or an inner `'//'`
 
 ### azuredol.ops.walk(store, delimiter='/')
 

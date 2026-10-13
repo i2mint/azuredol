@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T10:58:14Z",
+  "built_at": "2026-10-13T11:10:28Z",
   "package": {
     "name": "azuredol",
-    "version": "0.1.15",
+    "version": "0.1.16",
     "display_name": "azuredol",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "31694dd66ad01fbddb458fe578f5ce8252c1e635",
-    "short_commit": "31694dd",
+    "commit": "30080045fe7551de44e8c4c058652ff1ff003bf9",
+    "short_commit": "3008004",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/azuredol",
-    "commit_url": "https://github.com/i2mint/azuredol/commit/31694dd66ad01fbddb458fe578f5ce8252c1e635",
+    "commit_url": "https://github.com/i2mint/azuredol/commit/30080045fe7551de44e8c4c058652ff1ff003bf9",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/azuredol",
-    "sha": "31694dd66ad01fbddb458fe578f5ce8252c1e635",
+    "sha": "30080045fe7551de44e8c4c058652ff1ff003bf9",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "38386829801",
-    "run_url": "https://github.com/i2mint/azuredol/actions/runs/38386829801",
+    "run_id": "38388187813",
+    "run_url": "https://github.com/i2mint/azuredol/actions/runs/38388187813",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -56,18 +56,20 @@
   },
   "site": {
     "modules_documented": 8,
-    "objects_documented": 83
+    "objects_documented": 85
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.15",
-    "relation": "same",
+    "latest": "0.1.17",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/azuredol && cd azuredol\ngit checkout 31694dd66ad01fbddb458fe578f5ce8252c1e635\npip install \"epythet==0.2.15\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/azuredol && cd azuredol\ngit checkout 30080045fe7551de44e8c4c058652ff1ff003bf9\npip install \"epythet==0.2.15\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.1.16) is behind the latest release on PyPI (0.1.17): `pip install azuredol` gives newer code than these docs describe."
+    ]
   }
 }

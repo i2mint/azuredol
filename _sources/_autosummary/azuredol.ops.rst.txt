@@ -9,5 +9,6 @@ azuredol.ops
    .. autosummary::
    
       delete_container
+      substore
       walk
    
