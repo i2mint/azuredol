@@ -20,6 +20,7 @@ from azuredol.connection import AzureConnection
 # Typed-value stores (codec wrappers)
 # ---------------------------------------------------------------------------
 
+
 def typed_store(decode: Callable, encode: Callable, *, base: type = ContainerStore):
     """A ``base`` (default ``ContainerStore``) class with values ``decode(bytes)`` / ``encode(obj) -> bytes``.
 

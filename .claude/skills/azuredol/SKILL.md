@@ -55,6 +55,7 @@ from azuredol.base import ContainerStore
 
 # Right way: compose
 from azuredol.recipes import typed_store
+
 AzureJsonStore = typed_store(json.loads, lambda o: json.dumps(o).encode())
 
 

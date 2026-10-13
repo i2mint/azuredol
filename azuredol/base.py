@@ -195,7 +195,13 @@ class ContainerCollection(_ContainerStoreBase, KvReader):
         )
 
     def walk(self, *args, **kwargs):
-        raise AttributeError(_MOVED.format(old="walk", new="azuredol.ops.walk(store)", alt="or `walk_ids()` for the leaf's own blob ids"))
+        raise AttributeError(
+            _MOVED.format(
+                old="walk",
+                new="azuredol.ops.walk(store)",
+                alt="or `walk_ids()` for the leaf's own blob ids",
+            )
+        )
 
 
 class ContainerReader(ContainerCollection):
@@ -487,4 +493,10 @@ class AccountStore(AccountReader, KvPersister):
         cc.delete_container()
 
     def delete(self, *args, **kwargs):
-        raise AttributeError(_MOVED.format(old="delete", new="azuredol.ops.delete_container(store, name, force=True)", alt="or `del store[name]` for an empty container"))
+        raise AttributeError(
+            _MOVED.format(
+                old="delete",
+                new="azuredol.ops.delete_container(store, name, force=True)",
+                alt="or `del store[name]` for an empty container",
+            )
+        )

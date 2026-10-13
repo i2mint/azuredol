@@ -109,7 +109,9 @@ This is convenient and *dangerous*. We refuse it:
 
 ```python
 del account_store["container_name"]  # → raises if container is not empty
-azuredol.ops.delete_container(account_store, "container_name", force=True)  # explicit, documented; maps the key through any dol wrapper
+azuredol.ops.delete_container(
+    account_store, "container_name", force=True
+)  # explicit, documented; maps the key through any dol wrapper
 ```
 
 ## 13. `azure_func_service` (Azure Functions) lives in `functions.py`, unchanged
