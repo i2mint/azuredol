@@ -1,4 +1,0 @@
-azuredol.testing
-================
-.. automodule:: azuredol.testing
-   :members:

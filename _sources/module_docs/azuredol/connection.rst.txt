@@ -1,4 +1,0 @@
-azuredol.connection
-===================
-.. automodule:: azuredol.connection
-   :members:

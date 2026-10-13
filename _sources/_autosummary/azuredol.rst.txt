@@ -1,0 +1,58 @@
+﻿azuredol
+========
+
+.. automodule:: azuredol
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      resolve_credential
+      translate_azure_errors
+      azure_store
+      typed_store
+      typed_codec
+      delete_container
+      walk_container
+      azure_func_service
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AzureConnection
+      AccountCollection
+      AccountReader
+      AccountStore
+      BlobHandle
+      ContainerCollection
+      ContainerReader
+      ContainerStore
+      AzureJsonStore
+      AzurePickleStore
+      AzureTextStore
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      BlobAlreadyExistsError
+      BlobNotFoundError
+      ContainerAlreadyExistsError
+      ContainerNotEmptyError
+      ContainerNotFoundError
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   base
+   connection
+   errors
+   functions
+   ops
+   recipes
+   testing

@@ -1,0 +1,24 @@
+azuredol.connection
+===================
+
+.. automodule:: azuredol.connection
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      CredentialLike
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      resolve_credential
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AzureConnection
+   

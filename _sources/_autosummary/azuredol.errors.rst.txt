@@ -1,0 +1,22 @@
+azuredol.errors
+===============
+
+.. automodule:: azuredol.errors
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      translate_azure_errors
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      BlobAlreadyExistsError
+      BlobNotFoundError
+      ContainerAlreadyExistsError
+      ContainerNotEmptyError
+      ContainerNotFoundError
+   

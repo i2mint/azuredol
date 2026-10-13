@@ -1,0 +1,23 @@
+azuredol.recipes
+================
+
+.. automodule:: azuredol.recipes
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      AzureTextStore
+      AzureJsonStore
+      AzurePickleStore
+      AppendBlobStore
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      azure_store
+      typed_codec
+      typed_store
+   

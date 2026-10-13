@@ -1,4 +1,0 @@
-azuredol.errors
-===============
-.. automodule:: azuredol.errors
-   :members:

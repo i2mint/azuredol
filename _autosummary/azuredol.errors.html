@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="lime" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>azuredol.errors - azuredol</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="azuredol.functions" href="azuredol.functions.html" /><link rel="prev" title="azuredol.connection" href="azuredol.connection.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="azuredol.errors"/>
+    <meta name="twitter:card" content="summary"/>
+  
+<link rel="alternate" type="text/markdown" href="azuredol.errors.html.md">
+<link rel="describedby" href="../llms.txt" type="text/markdown">
+</head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      
+      
+      <strong>azuredol</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/i2mint/azuredol" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="azuredol.html">azuredol</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="azuredol.base.html">azuredol.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azuredol.connection.html">azuredol.connection</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">azuredol.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azuredol.functions.html">azuredol.functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azuredol.ops.html">azuredol.ops</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azuredol.recipes.html">azuredol.recipes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azuredol.testing.html">azuredol.testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ai-agents.html">For AI agents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#azuredol.errors.BlobAlreadyExistsError"><code class="docutils literal notranslate"><span class="pre">BlobAlreadyExistsError</span></code></a></li>
+<li><a class="reference internal" href="#azuredol.errors.BlobNotFoundError"><code class="docutils literal notranslate"><span class="pre">BlobNotFoundError</span></code></a></li>
+<li><a class="reference internal" href="#azuredol.errors.ContainerAlreadyExistsError"><code class="docutils literal notranslate"><span class="pre">ContainerAlreadyExistsError</span></code></a></li>
+<li><a class="reference internal" href="#azuredol.errors.ContainerNotEmptyError"><code class="docutils literal notranslate"><span class="pre">ContainerNotEmptyError</span></code></a></li>
+<li><a class="reference internal" href="#azuredol.errors.ContainerNotFoundError"><code class="docutils literal notranslate"><span class="pre">ContainerNotFoundError</span></code></a></li>
+<li><a class="reference internal" href="#azuredol.errors.translate_azure_errors"><code class="docutils literal notranslate"><span class="pre">translate_azure_errors()</span></code></a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">azuredol</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../api.html"><span itemprop="name">API reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="azuredol.html"><span itemprop="name">azuredol</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">azuredol.errors</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <section id="module-azuredol.errors">
+<span id="azuredol-errors"></span><h1>azuredol.errors<a class="headerlink" href="#module-azuredol.errors" title="Link to this heading">#</a></h1>
+<p>Custom exceptions and error-translation decorator for azuredol.</p>
+<p>All Azure SDK exception handling for the Mapping-shaped methods on close-to-metal stores
+funnels through <code class="code docutils literal notranslate"><span class="pre">translate_azure_errors</span></code> so the auth-error vs not-found distinction
+stays auditable from one place. See <code class="docutils literal notranslate"><span class="pre">misc/docs/design_decisions.md</span></code> §4.</p>
+<p class="rubric">Functions</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#azuredol.errors.translate_azure_errors" title="azuredol.errors.translate_azure_errors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_azure_errors</span></code></a>(*[, key_arg, ...])</p></td>
+<td><p>Decorator: translate Azure SDK exceptions into <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> subclasses.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Exceptions</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#azuredol.errors.BlobAlreadyExistsError" title="azuredol.errors.BlobAlreadyExistsError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlobAlreadyExistsError</span></code></a></p></td>
+<td><p>Raised on strict-create write attempts when the blob already exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#azuredol.errors.BlobNotFoundError" title="azuredol.errors.BlobNotFoundError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlobNotFoundError</span></code></a></p></td>
+<td><p>Raised when a blob does not exist.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#azuredol.errors.ContainerAlreadyExistsError" title="azuredol.errors.ContainerAlreadyExistsError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContainerAlreadyExistsError</span></code></a></p></td>
+<td><p>Raised on strict-create attempts when the container already exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#azuredol.errors.ContainerNotEmptyError" title="azuredol.errors.ContainerNotEmptyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContainerNotEmptyError</span></code></a></p></td>
+<td><p>Raised on <code class="docutils literal notranslate"><span class="pre">del</span> <span class="pre">account_store[name]</span></code> when the container has blobs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#azuredol.errors.ContainerNotFoundError" title="azuredol.errors.ContainerNotFoundError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContainerNotFoundError</span></code></a></p></td>
+<td><p>Raised when a container does not exist.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="azuredol.errors.BlobAlreadyExistsError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.errors.</span></span><span class="sig-name descname"><span class="pre">BlobAlreadyExistsError</span></span><a class="reference internal" href="../_modules/azuredol/errors.html#BlobAlreadyExistsError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.errors.BlobAlreadyExistsError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></p>
+<p>Raised on strict-create write attempts when the blob already exists.</p>
+<p><code class="docutils literal notranslate"><span class="pre">KeyError</span></code> subclass for symmetry with <code class="docutils literal notranslate"><span class="pre">BlobNotFoundError</span></code> — both signal a
+key-vs-store mismatch.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="azuredol.errors.BlobNotFoundError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.errors.</span></span><span class="sig-name descname"><span class="pre">BlobNotFoundError</span></span><a class="reference internal" href="../_modules/azuredol/errors.html#BlobNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.errors.BlobNotFoundError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></p>
+<p>Raised when a blob does not exist. <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> subclass so <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> consumers work.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="azuredol.errors.ContainerAlreadyExistsError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.errors.</span></span><span class="sig-name descname"><span class="pre">ContainerAlreadyExistsError</span></span><a class="reference internal" href="../_modules/azuredol/errors.html#ContainerAlreadyExistsError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.errors.ContainerAlreadyExistsError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></p>
+<p>Raised on strict-create attempts when the container already exists.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="azuredol.errors.ContainerNotEmptyError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.errors.</span></span><span class="sig-name descname"><span class="pre">ContainerNotEmptyError</span></span><a class="reference internal" href="../_modules/azuredol/errors.html#ContainerNotEmptyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.errors.ContainerNotEmptyError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a></p>
+<p>Raised on <code class="docutils literal notranslate"><span class="pre">del</span> <span class="pre">account_store[name]</span></code> when the container has blobs.</p>
+<p>The user must call <code class="docutils literal notranslate"><span class="pre">azuredol.delete_container(account_store,</span> <span class="pre">name,</span> <span class="pre">force=True)</span></code> to acknowledge the
+cascading delete. See <code class="docutils literal notranslate"><span class="pre">misc/docs/design_decisions.md</span></code> §12.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="azuredol.errors.ContainerNotFoundError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">azuredol.errors.</span></span><span class="sig-name descname"><span class="pre">ContainerNotFoundError</span></span><a class="reference internal" href="../_modules/azuredol/errors.html#ContainerNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.errors.ContainerNotFoundError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></p>
+<p>Raised when a container does not exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azuredol.errors.translate_azure_errors">
+<span class="sig-prename descclassname"><span class="pre">azuredol.errors.</span></span><span class="sig-name descname"><span class="pre">translate_azure_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">not_found_cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'azuredol.errors.BlobNotFoundError'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists_cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'azuredol.errors.BlobAlreadyExistsError'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/azuredol/errors.html#translate_azure_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.errors.translate_azure_errors" title="Link to this definition">#</a></dt>
+<dd><p>Decorator: translate Azure SDK exceptions into <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> subclasses.</p>
+<p>Auth errors (<code class="docutils literal notranslate"><span class="pre">ClientAuthenticationError</span></code>) and all other Azure errors propagate
+untouched — they are <em>never</em> swallowed as “key absent”. See
+<code class="docutils literal notranslate"><span class="pre">misc/docs/design_decisions.md</span></code> §4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_arg</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Position (int) or name (str) of the key argument in the wrapped
+method’s signature. Used to populate <code class="docutils literal notranslate"><span class="pre">KeyError(key)</span></code>. The receiver
+<code class="docutils literal notranslate"><span class="pre">self</span></code> is at index 0, so the user-facing key is typically at index 1
+(the default).</p></li>
+<li><p><strong>not_found_cls</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a>]</span>) – Exception class to raise on <code class="docutils literal notranslate"><span class="pre">ResourceNotFoundError</span></code>.</p></li>
+<li><p><strong>exists_cls</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a>]</span>) – Exception class to raise on <code class="docutils literal notranslate"><span class="pre">ResourceExistsError</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="azuredol.connection.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">azuredol.connection</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="azuredol.functions.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">azuredol.functions</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/i2mint/azuredol" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=468bc497"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=fd10adb8"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
+</html>

@@ -1,0 +1,18 @@
+azuredol.base
+=============
+
+.. automodule:: azuredol.base
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AccountCollection
+      AccountReader
+      AccountStore
+      BlobHandle
+      ContainerCollection
+      ContainerReader
+      ContainerStore
+   

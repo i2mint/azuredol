@@ -1,0 +1,12 @@
+azuredol.functions
+==================
+
+.. automodule:: azuredol.functions
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      azure_func_service
+   

@@ -1,0 +1,13 @@
+azuredol.ops
+============
+
+.. automodule:: azuredol.ops
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      delete_container
+      walk
+   

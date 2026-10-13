@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-10-13T09:36:31Z",
+  "package": {
+    "name": "azuredol",
+    "version": "0.1.14",
+    "display_name": "azuredol",
+    "source": "pyproject.toml"
+  },
+  "git": {
+    "available": true,
+    "commit": "f03adfc9cd1ed591a71ef02f7aebc793532a0ad2",
+    "short_commit": "f03adfc",
+    "branch": "master",
+    "tags": [],
+    "dirty": false,
+    "remote_url": "https://github.com/i2mint/azuredol",
+    "commit_url": "https://github.com/i2mint/azuredol/commit/f03adfc9cd1ed591a71ef02f7aebc793532a0ad2",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "i2mint/azuredol",
+    "sha": "f03adfc9cd1ed591a71ef02f7aebc793532a0ad2",
+    "sha_in_history": true,
+    "ref": "refs/heads/master",
+    "ref_name": "master",
+    "run_id": "38377374029",
+    "run_url": "https://github.com/i2mint/azuredol/actions/runs/38377374029",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.15",
+    "sphinx": "9.1.0",
+    "docutils": "0.22.4",
+    "python": "3.12.15"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "shibuya",
+    "accent": "#466400",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 8,
+    "objects_documented": 83
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.1.14",
+    "relation": "same",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/i2mint/azuredol && cd azuredol\ngit checkout f03adfc9cd1ed591a71ef02f7aebc793532a0ad2\npip install \"epythet==0.2.15\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": true,
+    "notes": []
+  }
+}

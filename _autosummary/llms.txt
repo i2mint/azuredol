@@ -1,0 +1,19 @@
+# azuredol
+
+> Azure Storage Data Object Layer
+
+
+## Pages in this subsection
+
+- [azuredol](azuredol.html.md): Access Azure Blob Storage through a Mapping interface.
+- [azuredol.base](azuredol.base.html.md): Close-to-metal Mapping stores over Azure Blob Storage.
+- [azuredol.connection](azuredol.connection.html.md): Connection-layer for azuredol.
+- [azuredol.errors](azuredol.errors.html.md): Custom exceptions and error-translation decorator for azuredol.
+- [azuredol.functions](azuredol.functions.html.md): Azure functions tools
+- [azuredol.ops](azuredol.ops.html.md): Key-taking and scope-wide operations, as free functions over the caller’s (possibly wrapped) store.
+- [azuredol.recipes](azuredol.recipes.html.md): Convenience wrappers and factories for azuredol.
+- [azuredol.testing](azuredol.testing.html.md): Testing helpers for azuredol — Azurite fixture and convenience builders.
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

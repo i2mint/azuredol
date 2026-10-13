@@ -1,4 +1,0 @@
-azuredol
-========
-.. automodule:: azuredol
-   :members:

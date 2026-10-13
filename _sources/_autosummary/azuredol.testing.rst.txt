@@ -1,0 +1,16 @@
+azuredol.testing
+================
+
+.. automodule:: azuredol.testing
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      azurite
+      azurite_is_running
+      docker_available
+      mk_test_store
+      pytest_azurite_connection
+   

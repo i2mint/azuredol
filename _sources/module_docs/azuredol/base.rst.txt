@@ -1,4 +1,0 @@
-azuredol.base
-=============
-.. automodule:: azuredol.base
-   :members:

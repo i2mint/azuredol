@@ -1,0 +1,27 @@
+# azuredol
+
+> Azure Storage Data Object Layer
+
+
+## Pages
+
+- [azuredol](index.html.md): Azure Storage Data Object Layer
+- [API reference](api.html.md): | &#96;azuredol&#96;   | Access Azure Blob Storage through a Mapping interface.   |
+- [azuredol](_autosummary/azuredol.html.md): Access Azure Blob Storage through a Mapping interface.
+- [azuredol.base](_autosummary/azuredol.base.html.md): Close-to-metal Mapping stores over Azure Blob Storage.
+- [azuredol.connection](_autosummary/azuredol.connection.html.md): Connection-layer for azuredol.
+- [azuredol.errors](_autosummary/azuredol.errors.html.md): Custom exceptions and error-translation decorator for azuredol.
+- [azuredol.functions](_autosummary/azuredol.functions.html.md): Azure functions tools
+- [azuredol.ops](_autosummary/azuredol.ops.html.md): Key-taking and scope-wide operations, as free functions over the caller’s (possibly wrapped) store.
+- [azuredol.recipes](_autosummary/azuredol.recipes.html.md): Convenience wrappers and factories for azuredol.
+- [azuredol.testing](_autosummary/azuredol.testing.html.md): Testing helpers for azuredol — Azurite fixture and convenience builders.
+- [For AI agents](ai-agents.html.md): &#96;azuredol&#96; ships artifacts for coding agents alongside its code. This page lists
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-10-13 09:36 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
+
+## Optional
+
+- [azuredol.md](azuredol.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

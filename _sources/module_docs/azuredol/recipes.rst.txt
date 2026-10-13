@@ -1,4 +1,0 @@
-azuredol.recipes
-================
-.. automodule:: azuredol.recipes
-   :members:
