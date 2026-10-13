@@ -242,3 +242,84 @@ def test_layers_that_only_delegate_id_of_key_are_refused():
     leaf = ContainerStore(mk_container(), prefix="logs/")
     with pytest.raises(TypeError, match="_id_of_key"):
         walk_container(_Delegating(leaf, "2026/"))
+
+
+# ---- 5. substore through the caller's wrappers (i2mint/azuredol#6) -------------------
+
+from azuredol import substore
+
+
+def _blobs():
+    return {
+        "p/2026/a.json": b'{"n": 1}',
+        "p/2026/b.json": b'{"n": 2}',
+        "p/2027/a.json": b'{"n": 3}',
+        "p/other": b"x",
+    }
+
+
+def test_substore_on_bare_store_is_the_cheap_leaf_one():
+    cc = mk_container(blobs=_blobs())
+    s = ContainerStore(cc, prefix="p/")
+    sub = substore(s, "2026/")
+    assert type(sub) is ContainerStore and sub.prefix == "p/2026/"
+    assert sorted(sub) == ["a.json", "b.json"]
+
+
+def test_substore_on_typed_store_decodes_like_the_parent():
+    s = AzureJsonStore(mk_container(blobs=_blobs()), prefix="p/")
+    sub = substore(s, "2026/")
+    assert sub["a.json"] == s["2026/a.json"] == {"n": 1}
+    assert sorted(sub) == ["a.json", "b.json"]
+
+
+def test_substore_through_key_codec_instance_wrapper():
+    import json
+
+    cc = mk_container(blobs=_blobs())
+    view = KeyCodecs.suffixed(".json")(AzureJsonStore(cc, prefix="p/"))
+    assert view["2026/a"] == {"n": 1}
+    sub = substore(view, "2026/")
+    assert sub["a"] == view["2026/a"] == {"n": 1}  # same blob, same decoding
+    assert sorted(sub) == ["a", "b"]
+    assert "a" in sub and "zzz" not in sub
+    assert json.dumps(sub["b"]) == '{"n": 2}'
+
+
+def test_substore_through_prefix_codec_and_scope():
+    cc = mk_container(blobs=_blobs())
+    view = KeyCodecs.prefixed("2026/")(ContainerStore(cc, prefix="p/"))
+    sub = substore(view, "x/")
+    assert sub._id_of_key("k") == "x/k"
+    assert sorted(substore(ContainerStore(cc, prefix="p/"), "2027/")) == ["a.json"]
+
+
+@pytest.mark.parametrize("bad", ["", "/", "2026", None, "//", "a//", "/a/"])
+def test_substore_refuses_malformed_key(bad):
+    with pytest.raises(ValueError, match="sub-store key"):
+        substore(ContainerStore(mk_container(), prefix="p/"), bad)
+
+
+def test_substore_refuses_opaque_layer():
+    with pytest.raises(TypeError, match="_id_of_key"):
+        substore(_Opaque(ContainerStore(mk_container(), prefix="p/"), "x/"), "a/")
+
+
+def test_substore_of_a_leaf_subclass_that_maps_keys_uses_the_view():
+    class Suffixed(ContainerStore):
+        def _id_of_key(self, k):
+            return super()._id_of_key(k) + ".json"
+
+        def _key_of_id(self, i):
+            return super()._key_of_id(i)[: -len(".json")]
+
+    cc = mk_container(blobs=_blobs())
+    s = Suffixed(cc, prefix="p/")
+    assert s["2026/a"] == b'{"n": 1}'
+    assert substore(s, "2026/")["a"] == b'{"n": 1}'
+
+
+def test_substore_reads_the_same_blob_through_stacked_prefix_codec():
+    cc = mk_container(blobs={"p/x/2026/a": b"1"})
+    view = KeyCodecs.prefixed("x/")(ContainerStore(cc, prefix="p/"))
+    assert substore(view, "2026/")["a"] == view["2026/a"] == b"1"

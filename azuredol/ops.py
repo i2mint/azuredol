@@ -13,6 +13,10 @@ A free function is handed the outer store, so it resolves the key through every 
 - :func:`walk` ``(store, delimiter)``: ``walk_blobs`` over the prefix the *caller's* empty
   key resolves to (leaf prefix + any key codec).
 
+- :func:`substore` ``(store, key)``: the sub-store ``store['2026/']`` is meant to be, built
+  through the caller's own store (i2mint/azuredol#6): ``substore(store, 'a/')[k]`` is always
+  ``store['a/' + k]``, whatever wrappers (key or value codecs, scopes) sit on ``store``.
+
 The removed methods (``AccountStore.delete``, ``ContainerCollection.walk``) now raise an
 ``AttributeError`` naming their replacement. This is the design of cosmodol.ops and s3dol's
 ADR-0011.
@@ -28,12 +32,14 @@ from __future__ import annotations
 import inspect
 from typing import Any, Iterator
 
-from dol import inner_most_key
+from dol import KeyCodecs, inner_most_key
 
 from azuredol.base import (
     AccountStore,
     ContainerCollection,
+    ContainerReader,
     _CASCADE_ID,
+    _ContainerStoreBase,
 )
 from azuredol.errors import ContainerNotFoundError
 
@@ -106,3 +112,40 @@ def walk(store, delimiter: str = "/") -> Iterator[Any]:
     return leaf._container_client.walk_blobs(
         name_starts_with=scope, delimiter=delimiter
     )
+
+
+def substore(store, key: str):
+    """The sub-store of ``store`` under ``key`` (a key ending in ``'/'``), as the caller sees it.
+
+    ``substore(store, 'a/')[k]`` is ``store['a/' + k]`` for every wrapper stack on ``store`` (up to the key limits below).
+    On a bare ``ContainerStore`` it is the cheap, server-scoped ``store['a/']`` (listing only
+    ``a/``'s blobs). On anything wrapped (a ``dol`` key/value codec or scope, including the
+    classes ``typed_store``/``AzureJsonStore`` build) it is a ``KeyCodecs.prefixed(key)`` view
+    *of that store*, so the caller's key and value mappings still apply; that view lists the
+    wrapped store's whole scope and keeps the keys under ``key``. (``store['a/']`` on a store
+    wrapped as an instance is minted by the innermost class and does not know about the
+    wrappers: i2mint/azuredol#6.)
+
+        The cheap path needs a leaf that does not override ``_id_of_key`` (a subclass that maps keys
+    gets the view). Attribute lookups on the view fall through to the wrapped store, so
+    ``.prefix`` and ``.walk_ids()`` of a view describe the parent's scope: use
+    :func:`walk` on it. Needs ``dol>=0.3.75`` (its prefix view skips out-of-scope keys when
+    iterating).
+
+    :param store: a ``ContainerReader``/``ContainerStore``, wrapped or not
+    :param key: a key ending in ``'/'``, without a leading ``'/'`` or an inner ``'//'``
+    """
+    if (
+        not isinstance(key, str)
+        or not key.endswith("/")
+        or key.startswith("/")
+        or "//" in key
+    ):
+        raise ValueError(
+            "A sub-store key must be a str ending in '/', without a leading '/' or '//' "
+            f"inside (the leaf would normalise them differently): {key!r}"
+        )
+    leaf = _leaf_of(store, ContainerReader)
+    if store is leaf and type(leaf)._id_of_key is _ContainerStoreBase._id_of_key:
+        return leaf._with(prefix=leaf._id_of_key(key))
+    return KeyCodecs.prefixed(key)(store)

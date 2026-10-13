@@ -32,7 +32,7 @@ classifiers = [
     "Topic :: System :: Filesystems",
 ]
 dependencies = [
-    "dol>=0.3.59",  # inner_most_key(default=...), exported from dol (azuredol.ops)
+    "dol>=0.3.75",  # inner_most_key(default=...) (azuredol.ops); prefix views skip out-of-scope keys (substore)
     "azure-storage-blob",
 ]
 
