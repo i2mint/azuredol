@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T09:36:31Z",
+  "built_at": "2026-10-13T10:58:14Z",
   "package": {
     "name": "azuredol",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "display_name": "azuredol",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "f03adfc9cd1ed591a71ef02f7aebc793532a0ad2",
-    "short_commit": "f03adfc",
+    "commit": "31694dd66ad01fbddb458fe578f5ce8252c1e635",
+    "short_commit": "31694dd",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/azuredol",
-    "commit_url": "https://github.com/i2mint/azuredol/commit/f03adfc9cd1ed591a71ef02f7aebc793532a0ad2",
+    "commit_url": "https://github.com/i2mint/azuredol/commit/31694dd66ad01fbddb458fe578f5ce8252c1e635",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/azuredol",
-    "sha": "f03adfc9cd1ed591a71ef02f7aebc793532a0ad2",
+    "sha": "31694dd66ad01fbddb458fe578f5ce8252c1e635",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "38377374029",
-    "run_url": "https://github.com/i2mint/azuredol/actions/runs/38377374029",
+    "run_id": "38386829801",
+    "run_url": "https://github.com/i2mint/azuredol/actions/runs/38386829801",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -60,11 +60,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.14",
+    "latest": "0.1.15",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/azuredol && cd azuredol\ngit checkout f03adfc9cd1ed591a71ef02f7aebc793532a0ad2\npip install \"epythet==0.2.15\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/azuredol && cd azuredol\ngit checkout 31694dd66ad01fbddb458fe578f5ce8252c1e635\npip install \"epythet==0.2.15\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

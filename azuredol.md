@@ -1,4 +1,4 @@
-> built 2026-10-13 09:36 UTC from f03adfc (master) · azuredol 0.1.14. Details: build_info.json
+> built 2026-10-13 10:58 UTC from 31694dd (master) · azuredol 0.1.15. Details: build_info.json
 
 # index.html.md
 
@@ -1097,7 +1097,7 @@ Skips the test session if Azurite cannot be started.
 
 # About this build
 
-This documentation was built on **2026-10-13 09:36 UTC** from commit <a href="https://github.com/i2mint/azuredol/commit/f03adfc9cd1ed591a71ef02f7aebc793532a0ad2"><code>f03adfc</code></a> on branch <code>master</code>, for **azuredol 0.1.14** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 10:58 UTC** from commit <a href="https://github.com/i2mint/azuredol/commit/31694dd66ad01fbddb458fe578f5ce8252c1e635"><code>31694dd</code></a> on branch <code>master</code>, for **azuredol 0.1.15** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1106,7 +1106,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                        |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/azuredol/commit/f03adfc9cd1ed591a71ef02f7aebc793532a0ad2"><code>f03adfc9cd1ed591a71ef02f7aebc793532a0ad2</code></a> |
+| Commit              | <a href="https://github.com/i2mint/azuredol/commit/31694dd66ad01fbddb458fe578f5ce8252c1e635"><code>31694dd66ad01fbddb458fe578f5ce8252c1e635</code></a> |
 | Branch              | <code>master</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                   |
 | Working tree        | clean                                                                                                                                                  |
@@ -1117,9 +1117,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/azuredol</code>                                                               |
-| Run          | <a href="https://github.com/i2mint/azuredol/actions/runs/38377374029">38377374029</a>      |
+| Run          | <a href="https://github.com/i2mint/azuredol/actions/runs/38386829801">38386829801</a>      |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>f03adfc9cd1ed591a71ef02f7aebc793532a0ad2</code> (in the history of the built commit) |
+| Event commit | <code>31694dd66ad01fbddb458fe578f5ce8252c1e635</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1144,13 +1144,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/azuredol/0.1.14/">0.1.14</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/azuredol/0.1.15/">0.1.15</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/azuredol && cd azuredol
-git checkout f03adfc9cd1ed591a71ef02f7aebc793532a0ad2
+git checkout 31694dd66ad01fbddb458fe578f5ce8252c1e635
 pip install "epythet==0.2.15"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

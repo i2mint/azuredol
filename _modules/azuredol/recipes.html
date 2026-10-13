@@ -141,155 +141,156 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="20"><span class="c1"># Typed-value stores (codec wrappers)</span>
 </span><span data-line="21"><span class="c1"># ---------------------------------------------------------------------------</span>
 </span><span data-line="22">
+</span><span data-line="23">
 <div class="viewcode-block" id="typed_store">
 <a class="viewcode-back" href="../../_autosummary/azuredol.recipes.html#azuredol.typed_store">[docs]</a>
-</span><span data-line="23"><span class="k">def</span><span class="w"> </span><span class="nf">typed_store</span><span class="p">(</span><span class="n">decode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">encode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">ContainerStore</span><span class="p">):</span>
-</span><span data-line="24"><span class="w">    </span><span class="sd">"""A ``base`` (default ``ContainerStore``) class with values ``decode(bytes)`` / ``encode(obj) -&gt; bytes``.</span>
-</span><span data-line="25">
-</span><span data-line="26"><span class="sd">    Unlike a bare ``wrap_kvs(ContainerStore, obj_of_data=..., data_of_obj=...)``, the trailing-slash</span>
-</span><span data-line="27"><span class="sd">    sub-store convention keeps working: ``store['2026/']`` comes back as a sub-store of the</span>
-</span><span data-line="28"><span class="sd">    *same typed class*, instead of being fed to ``decode`` (i2mint/azuredol#4).</span>
-</span><span data-line="29"><span class="sd">    """</span>
-</span><span data-line="30">
-</span><span data-line="31">    <span class="k">def</span><span class="w"> </span><span class="nf">obj_of_data</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-</span><span data-line="32">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ContainerReader</span><span class="p">):</span>  <span class="c1"># a trailing-slash sub-store, not blob bytes</span>
-</span><span data-line="33">            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">x</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">())</span>
-</span><span data-line="34">        <span class="k">return</span> <span class="n">decode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</span><span data-line="35">
-</span><span data-line="36">    <span class="bp">cls</span> <span class="o">=</span> <span class="n">wrap_kvs</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">obj_of_data</span><span class="o">=</span><span class="n">obj_of_data</span><span class="p">,</span> <span class="n">data_of_obj</span><span class="o">=</span><span class="n">encode</span><span class="p">)</span>
-</span><span data-line="37">    <span class="k">return</span> <span class="bp">cls</span></div>
+</span><span data-line="24"><span class="k">def</span><span class="w"> </span><span class="nf">typed_store</span><span class="p">(</span><span class="n">decode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">encode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">ContainerStore</span><span class="p">):</span>
+</span><span data-line="25"><span class="w">    </span><span class="sd">"""A ``base`` (default ``ContainerStore``) class with values ``decode(bytes)`` / ``encode(obj) -&gt; bytes``.</span>
+</span><span data-line="26">
+</span><span data-line="27"><span class="sd">    Unlike a bare ``wrap_kvs(ContainerStore, obj_of_data=..., data_of_obj=...)``, the trailing-slash</span>
+</span><span data-line="28"><span class="sd">    sub-store convention keeps working: ``store['2026/']`` comes back as a sub-store of the</span>
+</span><span data-line="29"><span class="sd">    *same typed class*, instead of being fed to ``decode`` (i2mint/azuredol#4).</span>
+</span><span data-line="30"><span class="sd">    """</span>
+</span><span data-line="31">
+</span><span data-line="32">    <span class="k">def</span><span class="w"> </span><span class="nf">obj_of_data</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span data-line="33">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ContainerReader</span><span class="p">):</span>  <span class="c1"># a trailing-slash sub-store, not blob bytes</span>
+</span><span data-line="34">            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">x</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">())</span>
+</span><span data-line="35">        <span class="k">return</span> <span class="n">decode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span><span data-line="36">
+</span><span data-line="37">    <span class="bp">cls</span> <span class="o">=</span> <span class="n">wrap_kvs</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">obj_of_data</span><span class="o">=</span><span class="n">obj_of_data</span><span class="p">,</span> <span class="n">data_of_obj</span><span class="o">=</span><span class="n">encode</span><span class="p">)</span>
+</span><span data-line="38">    <span class="k">return</span> <span class="bp">cls</span></div>
 
-</span><span data-line="38">
 </span><span data-line="39">
+</span><span data-line="40">
 <div class="viewcode-block" id="typed_codec">
 <a class="viewcode-back" href="../../_autosummary/azuredol.recipes.html#azuredol.typed_codec">[docs]</a>
-</span><span data-line="40"><span class="k">def</span><span class="w"> </span><span class="nf">typed_codec</span><span class="p">(</span><span class="n">decode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">encode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span data-line="41"><span class="w">    </span><span class="sd">"""``typed_store`` as a class decorator: the shape ``azure_store(value_codec=...)`` takes.</span>
-</span><span data-line="42">
-</span><span data-line="43"><span class="sd">    &gt;&gt;&gt; import json</span>
-</span><span data-line="44"><span class="sd">    &gt;&gt;&gt; codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())</span>
-</span><span data-line="45"><span class="sd">    &gt;&gt;&gt; callable(codec)</span>
-</span><span data-line="46"><span class="sd">    True</span>
-</span><span data-line="47"><span class="sd">    """</span>
-</span><span data-line="48">    <span class="k">return</span> <span class="k">lambda</span> <span class="n">base</span><span class="p">:</span> <span class="n">typed_store</span><span class="p">(</span><span class="n">decode</span><span class="p">,</span> <span class="n">encode</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">)</span></div>
+</span><span data-line="41"><span class="k">def</span><span class="w"> </span><span class="nf">typed_codec</span><span class="p">(</span><span class="n">decode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">encode</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+</span><span data-line="42"><span class="w">    </span><span class="sd">"""``typed_store`` as a class decorator: the shape ``azure_store(value_codec=...)`` takes.</span>
+</span><span data-line="43">
+</span><span data-line="44"><span class="sd">    &gt;&gt;&gt; import json</span>
+</span><span data-line="45"><span class="sd">    &gt;&gt;&gt; codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())</span>
+</span><span data-line="46"><span class="sd">    &gt;&gt;&gt; callable(codec)</span>
+</span><span data-line="47"><span class="sd">    True</span>
+</span><span data-line="48"><span class="sd">    """</span>
+</span><span data-line="49">    <span class="k">return</span> <span class="k">lambda</span> <span class="n">base</span><span class="p">:</span> <span class="n">typed_store</span><span class="p">(</span><span class="n">decode</span><span class="p">,</span> <span class="n">encode</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">)</span></div>
 
-</span><span data-line="49">
 </span><span data-line="50">
-</span><span data-line="51"><span class="c1"># Note: do NOT use `bytes.decode` directly as `obj_of_data` — known dol issue (#9).</span>
-</span><span data-line="52"><span class="n">AzureTextStore</span> <span class="o">=</span> <span class="n">typed_store</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
-</span><span data-line="53"><span class="sd">"""Text-typed values (str ↔ bytes via UTF-8)."""</span>
-</span><span data-line="54">
+</span><span data-line="51">
+</span><span data-line="52"><span class="c1"># Note: do NOT use `bytes.decode` directly as `obj_of_data` — known dol issue (#9).</span>
+</span><span data-line="53"><span class="n">AzureTextStore</span> <span class="o">=</span> <span class="n">typed_store</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span><span data-line="54"><span class="sd">"""Text-typed values (str ↔ bytes via UTF-8)."""</span>
 </span><span data-line="55">
-</span><span data-line="56"><span class="k">def</span><span class="w"> </span><span class="nf">_json_codec</span><span class="p">():</span>
-</span><span data-line="57"><span class="w">    </span><span class="sd">"""Lazy json import so this module is import-light."""</span>
-</span><span data-line="58">    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-</span><span data-line="59">
-</span><span data-line="60">    <span class="k">return</span> <span class="n">typed_store</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
-</span><span data-line="61">
+</span><span data-line="56">
+</span><span data-line="57"><span class="k">def</span><span class="w"> </span><span class="nf">_json_codec</span><span class="p">():</span>
+</span><span data-line="58"><span class="w">    </span><span class="sd">"""Lazy json import so this module is import-light."""</span>
+</span><span data-line="59">    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span data-line="60">
+</span><span data-line="61">    <span class="k">return</span> <span class="n">typed_store</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 </span><span data-line="62">
-</span><span data-line="63"><span class="k">def</span><span class="w"> </span><span class="nf">_pickle_codec</span><span class="p">():</span>
-</span><span data-line="64">    <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
-</span><span data-line="65">
-</span><span data-line="66">    <span class="k">return</span> <span class="n">typed_store</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
-</span><span data-line="67">
+</span><span data-line="63">
+</span><span data-line="64"><span class="k">def</span><span class="w"> </span><span class="nf">_pickle_codec</span><span class="p">():</span>
+</span><span data-line="65">    <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+</span><span data-line="66">
+</span><span data-line="67">    <span class="k">return</span> <span class="n">typed_store</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
 </span><span data-line="68">
-</span><span data-line="69"><span class="c1"># Built lazily so importing azuredol.recipes doesn't import json/pickle eagerly.</span>
-</span><span data-line="70"><span class="n">AzureJsonStore</span> <span class="o">=</span> <span class="n">_json_codec</span><span class="p">()</span>
-</span><span data-line="71"><span class="sd">"""JSON-typed values (dict/list/scalar ↔ bytes via ``json``)."""</span>
-</span><span data-line="72">
-</span><span data-line="73"><span class="n">AzurePickleStore</span> <span class="o">=</span> <span class="n">_pickle_codec</span><span class="p">()</span>
-</span><span data-line="74"><span class="sd">"""Pickle-typed values (Python objects ↔ bytes via ``pickle``)."""</span>
-</span><span data-line="75">
+</span><span data-line="69">
+</span><span data-line="70"><span class="c1"># Built lazily so importing azuredol.recipes doesn't import json/pickle eagerly.</span>
+</span><span data-line="71"><span class="n">AzureJsonStore</span> <span class="o">=</span> <span class="n">_json_codec</span><span class="p">()</span>
+</span><span data-line="72"><span class="sd">"""JSON-typed values (dict/list/scalar ↔ bytes via ``json``)."""</span>
+</span><span data-line="73">
+</span><span data-line="74"><span class="n">AzurePickleStore</span> <span class="o">=</span> <span class="n">_pickle_codec</span><span class="p">()</span>
+</span><span data-line="75"><span class="sd">"""Pickle-typed values (Python objects ↔ bytes via ``pickle``)."""</span>
 </span><span data-line="76">
-</span><span data-line="77"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span data-line="78"><span class="c1"># Append-blob variant (named alias)</span>
-</span><span data-line="79"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span data-line="80">
-</span><span data-line="81"><span class="n">AppendBlobStore</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">ContainerStore</span><span class="p">,</span> <span class="n">blob_type</span><span class="o">=</span><span class="n">BlobType</span><span class="o">.</span><span class="n">AppendBlob</span><span class="p">)</span>
-</span><span data-line="82"><span class="sd">"""``ContainerStore`` whose ``__setitem__`` creates append blobs by default.</span>
-</span><span data-line="83">
-</span><span data-line="84"><span class="sd">Recall the Mapping caveat: ``store[k] = v`` on an append blob still creates a new</span>
-</span><span data-line="85"><span class="sd">blob (``overwrite=True``) — it does NOT append to an existing blob. For incremental</span>
-</span><span data-line="86"><span class="sd">appends use ``BlobHandle(container, blob).append(data)``.</span>
-</span><span data-line="87"><span class="sd">"""</span>
-</span><span data-line="88">
+</span><span data-line="77">
+</span><span data-line="78"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span data-line="79"><span class="c1"># Append-blob variant (named alias)</span>
+</span><span data-line="80"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span data-line="81">
+</span><span data-line="82"><span class="n">AppendBlobStore</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">ContainerStore</span><span class="p">,</span> <span class="n">blob_type</span><span class="o">=</span><span class="n">BlobType</span><span class="o">.</span><span class="n">AppendBlob</span><span class="p">)</span>
+</span><span data-line="83"><span class="sd">"""``ContainerStore`` whose ``__setitem__`` creates append blobs by default.</span>
+</span><span data-line="84">
+</span><span data-line="85"><span class="sd">Recall the Mapping caveat: ``store[k] = v`` on an append blob still creates a new</span>
+</span><span data-line="86"><span class="sd">blob (``overwrite=True``) — it does NOT append to an existing blob. For incremental</span>
+</span><span data-line="87"><span class="sd">appends use ``BlobHandle(container, blob).append(data)``.</span>
+</span><span data-line="88"><span class="sd">"""</span>
 </span><span data-line="89">
-</span><span data-line="90"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span data-line="91"><span class="c1"># One-call factory</span>
-</span><span data-line="92"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span data-line="93">
+</span><span data-line="90">
+</span><span data-line="91"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span data-line="92"><span class="c1"># One-call factory</span>
+</span><span data-line="93"><span class="c1"># ---------------------------------------------------------------------------</span>
 </span><span data-line="94">
+</span><span data-line="95">
 <div class="viewcode-block" id="azure_store">
 <a class="viewcode-back" href="../../_autosummary/azuredol.recipes.html#azuredol.azure_store">[docs]</a>
-</span><span data-line="95"><span class="k">def</span><span class="w"> </span><span class="nf">azure_store</span><span class="p">(</span>
-</span><span data-line="96">    <span class="n">container</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="97">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="98">    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-</span><span data-line="99">    <span class="n">connection</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AzureConnection</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="100">    <span class="n">credential</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="101">    <span class="n">connection_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="102">    <span class="n">account_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="103">    <span class="n">account_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="104">    <span class="n">create_container_if_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="105">    <span class="n">blob_type</span><span class="p">:</span> <span class="n">BlobType</span> <span class="o">=</span> <span class="n">BlobType</span><span class="o">.</span><span class="n">BlockBlob</span><span class="p">,</span>
-</span><span data-line="106">    <span class="n">value_codec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="107"><span class="p">):</span>
-</span><span data-line="108"><span class="w">    </span><span class="sd">"""Build a ready-to-use ``ContainerStore`` (or codec-wrapped variant) in one call.</span>
-</span><span data-line="109">
-</span><span data-line="110"><span class="sd">    This is the "simple things simple" entry point. For complex configurations construct</span>
-</span><span data-line="111"><span class="sd">    ``AzureConnection`` and ``ContainerStore`` directly.</span>
-</span><span data-line="112">
-</span><span data-line="113"><span class="sd">    Args:</span>
-</span><span data-line="114"><span class="sd">        container: Container name.</span>
-</span><span data-line="115"><span class="sd">        prefix: Blob-name prefix to scope all keys.</span>
-</span><span data-line="116"><span class="sd">        connection: An ``AzureConnection`` (or anything ``AzureConnection.from_anything``</span>
-</span><span data-line="117"><span class="sd">            accepts) to reuse a service client. Mutually exclusive with the explicit</span>
-</span><span data-line="118"><span class="sd">            ``credential`` / ``connection_string`` / ``account_*`` kwargs.</span>
-</span><span data-line="119"><span class="sd">        credential, connection_string, account_url, account_key: Forwarded to</span>
-</span><span data-line="120"><span class="sd">            ``AzureConnection`` when ``connection`` is None.</span>
-</span><span data-line="121"><span class="sd">        create_container_if_missing: Create the container on first use if absent.</span>
-</span><span data-line="122"><span class="sd">        blob_type: Default blob type for writes.</span>
-</span><span data-line="123"><span class="sd">        value_codec: A decorator that, given a class, returns a wrapped class. Typically</span>
-</span><span data-line="124"><span class="sd">            ``typed_codec(decode, encode)``. A bare ``dol.wrap_kvs(...)`` breaks the</span>
-</span><span data-line="125"><span class="sd">            trailing-slash sub-store (i2mint/azuredol#4). When None (default), bytes pass</span>
-</span><span data-line="126"><span class="sd">            through.</span>
-</span><span data-line="127">
-</span><span data-line="128"><span class="sd">    Returns:</span>
-</span><span data-line="129"><span class="sd">        A ``ContainerStore`` instance, possibly codec-wrapped.</span>
-</span><span data-line="130"><span class="sd">    """</span>
-</span><span data-line="131">    <span class="k">if</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
-</span><span data-line="132">        <span class="n">credential</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="133">        <span class="ow">or</span> <span class="n">connection_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="134">        <span class="ow">or</span> <span class="n">account_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="135">        <span class="ow">or</span> <span class="n">account_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="136">    <span class="p">):</span>
-</span><span data-line="137">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span data-line="138">            <span class="s2">"Pass either `connection=...` or the explicit "</span>
-</span><span data-line="139">            <span class="s2">"(credential|connection_string|account_url|account_key) kwargs — not both."</span>
-</span><span data-line="140">        <span class="p">)</span>
-</span><span data-line="141">
-</span><span data-line="142">    <span class="n">conn</span> <span class="o">=</span> <span class="p">(</span>
-</span><span data-line="143">        <span class="n">AzureConnection</span><span class="o">.</span><span class="n">from_anything</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
-</span><span data-line="144">        <span class="k">if</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="145">        <span class="k">else</span> <span class="n">AzureConnection</span><span class="p">(</span>
-</span><span data-line="146">            <span class="n">credential</span><span class="o">=</span><span class="n">credential</span><span class="p">,</span>
-</span><span data-line="147">            <span class="n">connection_string</span><span class="o">=</span><span class="n">connection_string</span><span class="p">,</span>
-</span><span data-line="148">            <span class="n">account_url</span><span class="o">=</span><span class="n">account_url</span><span class="p">,</span>
-</span><span data-line="149">            <span class="n">account_key</span><span class="o">=</span><span class="n">account_key</span><span class="p">,</span>
-</span><span data-line="150">        <span class="p">)</span>
-</span><span data-line="151">    <span class="p">)</span>
-</span><span data-line="152">
-</span><span data-line="153">    <span class="bp">cls</span> <span class="o">=</span> <span class="n">ContainerStore</span>
-</span><span data-line="154">    <span class="k">if</span> <span class="n">value_codec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="155">        <span class="bp">cls</span> <span class="o">=</span> <span class="n">value_codec</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span data-line="156">
-</span><span data-line="157">    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span data-line="158">        <span class="n">container</span><span class="p">,</span>
-</span><span data-line="159">        <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-</span><span data-line="160">        <span class="n">connection</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span>
-</span><span data-line="161">        <span class="n">create_container_if_missing</span><span class="o">=</span><span class="n">create_container_if_missing</span><span class="p">,</span>
-</span><span data-line="162">        <span class="n">blob_type</span><span class="o">=</span><span class="n">blob_type</span><span class="p">,</span>
-</span><span data-line="163">    <span class="p">)</span></div>
+</span><span data-line="96"><span class="k">def</span><span class="w"> </span><span class="nf">azure_store</span><span class="p">(</span>
+</span><span data-line="97">    <span class="n">container</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="98">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="99">    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+</span><span data-line="100">    <span class="n">connection</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AzureConnection</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="101">    <span class="n">credential</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="102">    <span class="n">connection_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="103">    <span class="n">account_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="104">    <span class="n">account_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="105">    <span class="n">create_container_if_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="106">    <span class="n">blob_type</span><span class="p">:</span> <span class="n">BlobType</span> <span class="o">=</span> <span class="n">BlobType</span><span class="o">.</span><span class="n">BlockBlob</span><span class="p">,</span>
+</span><span data-line="107">    <span class="n">value_codec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="108"><span class="p">):</span>
+</span><span data-line="109"><span class="w">    </span><span class="sd">"""Build a ready-to-use ``ContainerStore`` (or codec-wrapped variant) in one call.</span>
+</span><span data-line="110">
+</span><span data-line="111"><span class="sd">    This is the "simple things simple" entry point. For complex configurations construct</span>
+</span><span data-line="112"><span class="sd">    ``AzureConnection`` and ``ContainerStore`` directly.</span>
+</span><span data-line="113">
+</span><span data-line="114"><span class="sd">    Args:</span>
+</span><span data-line="115"><span class="sd">        container: Container name.</span>
+</span><span data-line="116"><span class="sd">        prefix: Blob-name prefix to scope all keys.</span>
+</span><span data-line="117"><span class="sd">        connection: An ``AzureConnection`` (or anything ``AzureConnection.from_anything``</span>
+</span><span data-line="118"><span class="sd">            accepts) to reuse a service client. Mutually exclusive with the explicit</span>
+</span><span data-line="119"><span class="sd">            ``credential`` / ``connection_string`` / ``account_*`` kwargs.</span>
+</span><span data-line="120"><span class="sd">        credential, connection_string, account_url, account_key: Forwarded to</span>
+</span><span data-line="121"><span class="sd">            ``AzureConnection`` when ``connection`` is None.</span>
+</span><span data-line="122"><span class="sd">        create_container_if_missing: Create the container on first use if absent.</span>
+</span><span data-line="123"><span class="sd">        blob_type: Default blob type for writes.</span>
+</span><span data-line="124"><span class="sd">        value_codec: A decorator that, given a class, returns a wrapped class. Typically</span>
+</span><span data-line="125"><span class="sd">            ``typed_codec(decode, encode)``. A bare ``dol.wrap_kvs(...)`` breaks the</span>
+</span><span data-line="126"><span class="sd">            trailing-slash sub-store (i2mint/azuredol#4). When None (default), bytes pass</span>
+</span><span data-line="127"><span class="sd">            through.</span>
+</span><span data-line="128">
+</span><span data-line="129"><span class="sd">    Returns:</span>
+</span><span data-line="130"><span class="sd">        A ``ContainerStore`` instance, possibly codec-wrapped.</span>
+</span><span data-line="131"><span class="sd">    """</span>
+</span><span data-line="132">    <span class="k">if</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+</span><span data-line="133">        <span class="n">credential</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="134">        <span class="ow">or</span> <span class="n">connection_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="135">        <span class="ow">or</span> <span class="n">account_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="136">        <span class="ow">or</span> <span class="n">account_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="137">    <span class="p">):</span>
+</span><span data-line="138">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span data-line="139">            <span class="s2">"Pass either `connection=...` or the explicit "</span>
+</span><span data-line="140">            <span class="s2">"(credential|connection_string|account_url|account_key) kwargs — not both."</span>
+</span><span data-line="141">        <span class="p">)</span>
+</span><span data-line="142">
+</span><span data-line="143">    <span class="n">conn</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="144">        <span class="n">AzureConnection</span><span class="o">.</span><span class="n">from_anything</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+</span><span data-line="145">        <span class="k">if</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="146">        <span class="k">else</span> <span class="n">AzureConnection</span><span class="p">(</span>
+</span><span data-line="147">            <span class="n">credential</span><span class="o">=</span><span class="n">credential</span><span class="p">,</span>
+</span><span data-line="148">            <span class="n">connection_string</span><span class="o">=</span><span class="n">connection_string</span><span class="p">,</span>
+</span><span data-line="149">            <span class="n">account_url</span><span class="o">=</span><span class="n">account_url</span><span class="p">,</span>
+</span><span data-line="150">            <span class="n">account_key</span><span class="o">=</span><span class="n">account_key</span><span class="p">,</span>
+</span><span data-line="151">        <span class="p">)</span>
+</span><span data-line="152">    <span class="p">)</span>
+</span><span data-line="153">
+</span><span data-line="154">    <span class="bp">cls</span> <span class="o">=</span> <span class="n">ContainerStore</span>
+</span><span data-line="155">    <span class="k">if</span> <span class="n">value_codec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="156">        <span class="bp">cls</span> <span class="o">=</span> <span class="n">value_codec</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span data-line="157">
+</span><span data-line="158">    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span data-line="159">        <span class="n">container</span><span class="p">,</span>
+</span><span data-line="160">        <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+</span><span data-line="161">        <span class="n">connection</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span>
+</span><span data-line="162">        <span class="n">create_container_if_missing</span><span class="o">=</span><span class="n">create_container_if_missing</span><span class="p">,</span>
+</span><span data-line="163">        <span class="n">blob_type</span><span class="o">=</span><span class="n">blob_type</span><span class="p">,</span>
+</span><span data-line="164">    <span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -318,7 +319,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=468bc497"></script>
+      <script src="../../_static/documentation_options.js?v=e2f3408e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
