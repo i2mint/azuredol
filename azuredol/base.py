@@ -12,6 +12,7 @@ See ``misc/docs/architecture.md`` Layer B. Codec / convenience layers live in
 
 from __future__ import annotations
 
+from contextvars import ContextVar
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterator, Optional, Union
 
@@ -35,6 +36,16 @@ from azuredol.errors import (
     ContainerNotFoundError,
     translate_azure_errors,
 )
+
+
+_MOVED = (
+    "AccountStore/ContainerStore.{old}() took the caller's *unmapped* key (or the leaf's "
+    "own prefix) when called through a dol wrapper (i2mint/azuredol#4). Use {new}, {alt}."
+)
+
+# The container id a ``azuredol.ops.delete_container`` call authorises ``__delitem__`` to
+# cascade-delete (blobs first). ``None`` (the default) means: refuse non-empty containers.
+_CASCADE_ID: ContextVar[Optional[str]] = ContextVar("azuredol_cascade_id", default=None)
 
 
 # ---------------------------------------------------------------------------
@@ -114,11 +125,12 @@ class _ContainerStoreBase:
 
     # ---- internal: derive a sibling store with adjusted attrs ----
 
-    def _with(self, **overrides) -> "_ContainerStoreBase":
-        """Build a new instance of the same class with overridden init kwargs.
+    def _init_kwargs(self, **overrides) -> dict:
+        """The init kwargs that rebuild this store, with ``overrides`` applied.
 
-        Used by the trailing-slash sub-store convention. Carries the underlying
-        ``ContainerClient`` over to avoid re-resolving credentials.
+        Carries the underlying ``ContainerClient`` over to avoid re-resolving credentials.
+        A codec-wrapped class uses this to mint a sub-store of *its own* type
+        (``azuredol.recipes.typed_store``), instead of the bare leaf class.
         """
         kw = dict(
             container=self._container_client,
@@ -132,7 +144,14 @@ class _ContainerStoreBase:
             ),
         )
         kw.update(overrides)
-        return type(self)(**kw)
+        return kw
+
+    def _with(self, **overrides) -> "_ContainerStoreBase":
+        """Build a new instance of the same class with overridden init kwargs.
+
+        Used by the trailing-slash sub-store convention.
+        """
+        return type(self)(**self._init_kwargs(**overrides))
 
 
 class ContainerCollection(_ContainerStoreBase, KvReader):
@@ -161,15 +180,20 @@ class ContainerCollection(_ContainerStoreBase, KvReader):
             "cost). Use `sum(1 for _ in store)` if you accept the scan cost."
         )
 
-    def walk(self, delimiter: str = "/") -> Iterator[Any]:
-        """Hierarchical walk yielding either ``BlobProperties`` or ``BlobPrefix`` nodes.
+    def walk_ids(self, delimiter: str = "/") -> Iterator[Any]:
+        """Hierarchical walk of the *leaf's* prefix, yielding ``BlobProperties`` / ``BlobPrefix`` nodes.
 
-        Thin pass-through to ``ContainerClient.walk_blobs``. Useful for tree-shaped
-        listings; not part of the Mapping interface.
+        Thin pass-through to ``ContainerClient.walk_blobs``. The scope is the leaf's own
+        ``prefix`` and each node's ``.name`` is an absolute blob id (never a store key), so
+        under a ``dol`` key codec it disagrees with ``__iter__``. For a scope that follows
+        the caller's (possibly wrapped) store use ``azuredol.ops.walk(store)``.
         """
         return self._container_client.walk_blobs(
             name_starts_with=self.prefix, delimiter=delimiter
         )
+
+    def walk(self, *args, **kwargs):
+        raise AttributeError(_MOVED.format(old="walk", new="azuredol.ops.walk(store)", alt="or `walk_ids()` for the leaf's own blob ids"))
 
 
 class ContainerReader(ContainerCollection):
@@ -423,7 +447,7 @@ class AccountStore(AccountReader, KvPersister):
     ``__setitem__`` creates a container; the value is ignored except when it's a
     Mapping (in which case it is treated as an initial bulk-load).
 
-    ``__delitem__`` refuses non-empty containers — call ``self.delete(name, force=True)``
+    ``__delitem__`` refuses non-empty containers — call ``azuredol.ops.delete_container(store, name, force=True)``
     to acknowledge a cascading delete. See ``misc/docs/design_decisions.md`` §12.
     """
 
@@ -446,23 +470,19 @@ class AccountStore(AccountReader, KvPersister):
         cc = self._service_client.get_container_client(k)
         if not cc.exists():
             raise ContainerNotFoundError(k)
-        # Refuse non-empty containers; force-delete is opt-in via .delete(name, force=True).
+        # Refuse non-empty containers; force-delete is opt-in via azuredol.ops.delete_container(store, name, force=True).
+        if _CASCADE_ID.get() == k:
+            for blob in cc.list_blobs():
+                cc.delete_blob(blob.name)
         try:
             next(iter(cc.list_blobs(results_per_page=1)))
             raise ContainerNotEmptyError(
                 f"Container {k!r} is not empty. Call "
-                f"`account_store.delete({k!r}, force=True)` to cascade-delete its blobs."
+                f"`azuredol.ops.delete_container(account_store, {k!r}, force=True)` to cascade-delete its blobs."
             )
         except StopIteration:
             pass
         cc.delete_container()
 
-    def delete(self, k: str, *, force: bool = False) -> None:
-        """Delete a container; if ``force=True``, cascade-delete any blobs first."""
-        cc = self._service_client.get_container_client(k)
-        if not cc.exists():
-            raise ContainerNotFoundError(k)
-        if force:
-            for blob in cc.list_blobs():
-                cc.delete_blob(blob.name)
-        cc.delete_container()
+    def delete(self, *args, **kwargs):
+        raise AttributeError(_MOVED.format(old="delete", new="azuredol.ops.delete_container(store, name, force=True)", alt="or `del store[name]` for an empty container"))

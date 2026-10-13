@@ -12,7 +12,7 @@ from typing import Any, Callable, Optional, Union
 from azure.storage.blob import BlobType
 from dol import wrap_kvs
 
-from azuredol.base import ContainerStore
+from azuredol.base import ContainerReader, ContainerStore
 from azuredol.connection import AzureConnection
 
 
@@ -20,12 +20,25 @@ from azuredol.connection import AzureConnection
 # Typed-value stores (codec wrappers)
 # ---------------------------------------------------------------------------
 
+def typed_store(decode: Callable, encode: Callable):
+    """A ``ContainerStore`` class whose values are ``decode(bytes)`` / ``encode(obj) -> bytes``.
+
+    Unlike a bare ``wrap_kvs(ContainerStore, obj_of_data=..., data_of_obj=...)``, the trailing-slash
+    sub-store convention keeps working: ``store['2026/']`` comes back as a sub-store of the
+    *same typed class*, instead of being fed to ``decode`` (i2mint/azuredol#4).
+    """
+
+    def obj_of_data(x):
+        if isinstance(x, ContainerReader):  # a trailing-slash sub-store, not blob bytes
+            return cls(**x._init_kwargs())
+        return decode(x)
+
+    cls = wrap_kvs(ContainerStore, obj_of_data=obj_of_data, data_of_obj=encode)
+    return cls
+
+
 # Note: do NOT use `bytes.decode` directly as `obj_of_data` — known dol issue (#9).
-AzureTextStore = wrap_kvs(
-    ContainerStore,
-    obj_of_data=lambda b: b.decode(),
-    data_of_obj=lambda s: s.encode(),
-)
+AzureTextStore = typed_store(lambda b: b.decode(), lambda s: s.encode())
 """Text-typed values (str ↔ bytes via UTF-8)."""
 
 
@@ -33,21 +46,13 @@ def _json_codec():
     """Lazy json import so this module is import-light."""
     import json
 
-    return wrap_kvs(
-        ContainerStore,
-        obj_of_data=lambda b: json.loads(b),
-        data_of_obj=lambda obj: json.dumps(obj).encode(),
-    )
+    return typed_store(lambda b: json.loads(b), lambda obj: json.dumps(obj).encode())
 
 
 def _pickle_codec():
     import pickle
 
-    return wrap_kvs(
-        ContainerStore,
-        obj_of_data=lambda b: pickle.loads(b),
-        data_of_obj=lambda obj: pickle.dumps(obj),
-    )
+    return typed_store(lambda b: pickle.loads(b), lambda obj: pickle.dumps(obj))
 
 
 # Built lazily so importing azuredol.recipes doesn't import json/pickle eagerly.

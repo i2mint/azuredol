@@ -50,9 +50,9 @@ Power users in hot loops should branch on the cached `BlobHandle` and use try/ex
 - The `__getitem__` / `__setitem__` / `__delitem__` bodies tiny and readable.
 - The "auth error vs not-found" distinction crisp: auth errors *always* re-raise; only `ResourceNotFoundError` translates.
 
-## 5. Sub-stores use `mk_relative_path_store(prefix_attr='prefix')`
+## 5. Sub-stores are minted by the leaf from explicit init kwargs
 
-The legacy s3dol-style trick `type(self)(**self.__dict__)` is fragile (breaks the moment any attr isn't an `__init__` arg). `dol`'s `mk_relative_path_store` is the canonical mechanism and gives us `s['prefix/']` → sub-store with zero round-trips.
+The legacy s3dol-style trick `type(self)(**self.__dict__)` is fragile (breaks the moment any attr isn't an `__init__` arg). The leaf instead rebuilds itself from the explicit init kwargs (`_init_kwargs` / `_with`), with prefix translation in `_id_of_key` / `_key_of_id`, giving `s['prefix/']` → sub-store with zero round-trips. (The code never used `mk_relative_path_store`; earlier versions of this document said it did: i2mint/azuredol#4.) Value-codec classes mint sub-stores of their own class via `recipes.typed_store`; keyed operations are free functions in `azuredol.ops` (see architecture.md, "Sub-stores and prefix scoping").
 
 ## 6. Polymorphic credential input
 
@@ -90,7 +90,7 @@ S3 calls the top-level grouping a "bucket"; Azure calls it a "container". We mir
 
 No module-level `BlobServiceClient` cache. No process-wide credential cache beyond what the Azure SDK itself does. Every `AzureConnection` owns its `BlobServiceClient`. Tests that need isolation simply build a fresh `AzureConnection`.
 
-Connection re-use is a *user-level* concern — the recipe layer's `azure_store(...)` factory caches per-(account, container) within a single process via `functools.lru_cache` on the underlying connection builder, but that cache is opt-out (`azure_store(..., reuse_connection=False)`) and is documented.
+Connection re-use is a *user-level* concern: build one `AzureConnection` and pass it as `connection=` to each `azure_store(...)` / store.
 
 ## 11. Reader-only classes are real
 
@@ -109,7 +109,7 @@ This is convenient and *dangerous*. We refuse it:
 
 ```python
 del account_store["container_name"]  # → raises if container is not empty
-account_store.delete("container_name", force=True)  # explicit, documented
+azuredol.ops.delete_container(account_store, "container_name", force=True)  # explicit, documented; maps the key through any dol wrapper
 ```
 
 ## 13. `azure_func_service` (Azure Functions) lives in `functions.py`, unchanged

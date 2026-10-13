@@ -21,7 +21,7 @@ file distills.
 ## Mental model in one diagram
 
 ```
-azuredol.recipes        ← codec layers, mk_azure_store(...) one-call factory
+azuredol.recipes        ← codec layers, azure_store(...) one-call factory
 azuredol.base           ← AccountStore, ContainerStore, BlobHandle (close-to-metal, bytes)
 azuredol.connection     ← AzureConnection: credential cascade, lazy BlobServiceClient
 azuredol.errors         ← @translate_azure_errors decorator, custom KeyError subclasses
@@ -39,11 +39,11 @@ is a mapping-of-containers; `BlobHandle` is a non-Mapping escape hatch for one b
 3. **No `__len__` on `ContainerStore`.** Pagination cost is unbounded. Users wanting a count call `sum(1 for _ in store)` and own the cost.
 4. **All Azure-exception catches happen in `errors.py`.** Every Mapping method on a close-to-metal store is wrapped with `@translate_azure_errors`; nothing else catches `azure.core.exceptions.*`. Auth errors *never* translate to "key absent".
 5. **`overwrite=True` is the default** on `__setitem__`. Dict semantics demand it. Strict-create is `BlobHandle.create(data, overwrite=False)`.
-6. **Sub-stores use `mk_relative_path_store(prefix_attr='prefix')`** from `dol.paths`. Do NOT reinvent the `type(self)(**self.__dict__)` pattern from s3dol.
+6. **Sub-stores are minted by the leaf** (`_with` / `_init_kwargs`, explicit init kwargs; prefix translation in `_id_of_key` / `_key_of_id`). Do NOT use the `type(self)(**self.__dict__)` pattern from s3dol. Value codecs must be built with `recipes.typed_store` so a `store['sub/']` sub-store keeps the codec class.
 7. **Polymorphic constructor inputs.** Public constructors accept the thing or a spec for it (string container name → resolve via `connection.resolve_credential`; existing `ContainerClient` → used as-is; dict → built from kwargs).
-8. **No global mutable state.** No module-level `BlobServiceClient`. Connection re-use is a recipe-layer concern (`mk_azure_store(..., reuse_connection=True)`, defaulting to `True`, opt-out documented).
+8. **No global mutable state.** No module-level `BlobServiceClient`. Connection re-use is a recipe-layer concern (pass one `AzureConnection` as `connection=` to reuse it).
 9. **HNS / ADLS Gen2 is out of scope.** Sibling package `azuredatalakedol` (TBD). Do NOT auto-detect HNS inside azuredol.
-10. **No silent destruction.** `del account_store['container']` refuses non-empty containers; `account_store.delete('container', force=True)` is the explicit purge.
+10. **No silent destruction.** `del account_store['container']` refuses non-empty containers; `azuredol.ops.delete_container(account_store, 'container', force=True)` is the explicit purge (a free function: methods that take keys bypass dol key codecs; same for `ops.walk`).
 
 ## Adding a new value codec / key transform
 
@@ -54,8 +54,8 @@ from dol import wrap_kvs, KeyCodecs, ValueCodecs, Pipe
 from azuredol.base import ContainerStore
 
 # Right way: compose
-AzureJsonStore = wrap_kvs(ContainerStore, value_codec=ValueCodecs.json())
-AzureJsonFiles = Pipe(KeyCodecs.suffixed(".json"), ValueCodecs.json())(ContainerStore)
+from azuredol.recipes import typed_store
+AzureJsonStore = typed_store(json.loads, lambda o: json.dumps(o).encode())
 
 
 # Wrong way: subclass
@@ -109,13 +109,13 @@ Azurite does **not** support: Azure Files, ADLS Gen2 / HNS, object replication, 
 |---|---|
 | Plain bytes mapping over a container | `ContainerStore(container_client_or_name)` |
 | Bytes mapping scoped to a prefix | `ContainerStore(name, prefix='logs/')` |
-| JSON-typed values | `wrap_kvs(ContainerStore, value_codec=ValueCodecs.json())` |
-| Text-typed values | `wrap_kvs(ContainerStore, obj_of_data=lambda b: b.decode(), data_of_obj=lambda s: s.encode())` |
+| JSON-typed values | `recipes.AzureJsonStore` (or `recipes.typed_store(decode, encode)`) |
+| Text-typed values | `recipes.AzureTextStore` |
 | Append-only (log) blobs | `recipes.AppendBlobStore(container_name)` or `ContainerStore(..., blob_type=BlobType.AppendBlob)` |
 | Stream a large blob | `BlobHandle(container, blob).download_stream(chunk_size=...)` |
 | Pre-signed URL | `BlobHandle(container, blob).url(expires_in=timedelta(minutes=15))` |
 | Iterate containers in an account | `for name in AccountStore(connection): ...` |
-| One-call factory for a typed store | `recipes.mk_azure_store(container='...', prefix='...', value_codec=...)` |
+| One-call factory for a typed store | `recipes.azure_store('...', prefix='...', value_codec=...)` |
 
 ## When in doubt
 
