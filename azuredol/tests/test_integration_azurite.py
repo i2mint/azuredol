@@ -25,6 +25,7 @@ from azuredol import (
     BlobNotFoundError,
     ContainerStore,
     azure_store,
+    delete_container,
 )
 from azuredol.testing import (
     AZURITE_CONNECTION_STRING,
@@ -314,7 +315,7 @@ def test_account_delete_refuses_nonempty(azure_connection, container_name):
         with pytest.raises(ContainerNotEmptyError):
             del acct[container_name]
         # Force-delete works.
-        acct.delete(container_name, force=True)
+        delete_container(acct, container_name, force=True)
         assert container_name not in acct
     finally:
         # If the test failed before .delete, clean up.

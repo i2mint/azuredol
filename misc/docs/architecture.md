@@ -24,7 +24,7 @@ For the *why* behind every defaulted choice, see [design_decisions.md](design_de
 ┌──────────────────────────────────────────────────────────────┐
 │  Layer C — convenience wrappers (azuredol.recipes)           │
 │  Codec layers, prefix sub-stores, factory helpers,           │
-│  one-call `mk_azure_store(...)`                              │
+│  one-call `azure_store(...)`                              │
 ├──────────────────────────────────────────────────────────────┤
 │  Layer B — close-to-metal mapping stores (azuredol.base)     │
 │  AccountStore, ContainerStore (the primary), BlobHandle      │
@@ -95,26 +95,22 @@ as one `BlobClient` discriminated by methods. We expose them through:
 
 ### Layer C — Convenience (`azuredol.recipes`)
 
-Built **only** by `wrap_kvs` / `Pipe` / `mk_relative_path_store` composition. Never by subclassing.
+Built by `wrap_kvs` / `Pipe` composition (via `typed_store` for value codecs). Not by subclassing a store.
 
 Standard recipes:
 
 ```python
-from dol import wrap_kvs, ValueCodecs, KeyCodecs, Pipe, mk_relative_path_store
+from dol import wrap_kvs, KeyCodecs, Pipe
+from azuredol.recipes import typed_store
 
 # JSON values
-AzureJsonStore = wrap_kvs(ContainerStore, value_codec=ValueCodecs.json())
+AzureJsonStore = typed_store(json.loads, lambda obj: json.dumps(obj).encode())
 
 # Pickle values
-AzurePickleStore = wrap_kvs(ContainerStore, value_codec=ValueCodecs.pickle())
-
-# Filter by suffix
-AzureJsonFiles = Pipe(KeyCodecs.suffixed(".json"), ValueCodecs.json())(ContainerStore)
+AzurePickleStore = typed_store(pickle.loads, pickle.dumps)
 
 # Text values (drop-in for the old AzureTextFiles)
-AzureTextStore = wrap_kvs(
-    ContainerStore, obj_of_data=lambda b: b.decode(), data_of_obj=lambda s: s.encode()
-)
+AzureTextStore = typed_store(lambda b: b.decode(), lambda s: s.encode())
 
 # Append-blob variant
 AppendBlobStore = partial(ContainerStore, blob_type=BlobType.AppendBlob)
@@ -154,8 +150,7 @@ A small `@translate_azure_errors(key_arg=...)` decorator does the `ResourceNotFo
 
 ## Sub-stores and prefix scoping
 
-`ContainerStore` carries a `prefix` and is wrapped at construction with
-`mk_relative_path_store(prefix_attr='prefix')`. As a result:
+`ContainerStore` carries a `prefix` and translates keys itself (`_id_of_key` / `_key_of_id`, in the leaf; no `mk_relative_path_store`). As a result:
 
 ```python
 store = azure_store("mycontainer", prefix="logs/")
@@ -163,8 +158,12 @@ store["2026/05/22.log"]  # blob path = 'logs/2026/05/22.log'
 sub = store["2026/"]  # → ContainerStore with prefix='logs/2026/'  (zero round-trips)
 ```
 
-The `s['prefix/']` → sub-store convention is delegated to `dol`. We do **not** reimplement
-the `type(self)(**self.__dict__)` trick used by older blob stores.
+The `s['prefix/']` → sub-store convention is implemented in the leaf: `ContainerReader.__getitem__` calls `_with(prefix=...)`, which rebuilds the store from explicit init kwargs (`_init_kwargs`), never from `self.__dict__`.
+
+Because dol wraps by delegation, anything a wrapper does not map reaches the leaf with the caller's unmapped key (i2mint/azuredol#4, i2mint/dol#83). Two consequences are handled explicitly:
+
+- A **value codec** would be fed the sub-store as if it were blob bytes. `recipes.typed_store(decode, encode)` builds the codec class so that a sub-store comes back as a sub-store *of the same typed class*. Use it (not a bare `wrap_kvs(ContainerStore, ...)`) for new codecs (`typed_codec(decode, encode)` is the same as a decorator, for `azure_store(value_codec=...)`). Limit: the sub-store convention is minted by the innermost typed class, so a *further* dol wrapper placed on top of an instance (e.g. an extra key codec) is not carried into `store['sub/']`; for such compositions index by full key.
+- **Keyed or scope-wide operations are free functions** (`azuredol.ops`), not methods: `delete_container(store, name, force=...)` and `walk(store)` resolve the key/prefix through every layer (`dol.inner_most_key`). The methods `AccountStore.delete` and `ContainerCollection.walk` were removed (they raise `AttributeError` naming the replacement); `walk_ids()` remains for the leaf's own prefix.
 
 ## What we explicitly do NOT do
 

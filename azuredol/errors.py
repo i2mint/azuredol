@@ -59,7 +59,7 @@ class ContainerAlreadyExistsError(KeyError):
 class ContainerNotEmptyError(RuntimeError):
     """Raised on ``del account_store[name]`` when the container has blobs.
 
-    The user must call ``account_store.delete(name, force=True)`` to acknowledge the
+    The user must call ``azuredol.delete_container(account_store, name, force=True)`` to acknowledge the
     cascading delete. See ``misc/docs/design_decisions.md`` §12.
     """
 

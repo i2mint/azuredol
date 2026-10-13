@@ -12,7 +12,7 @@ from typing import Any, Callable, Optional, Union
 from azure.storage.blob import BlobType
 from dol import wrap_kvs
 
-from azuredol.base import ContainerStore
+from azuredol.base import ContainerReader, ContainerStore
 from azuredol.connection import AzureConnection
 
 
@@ -20,12 +20,36 @@ from azuredol.connection import AzureConnection
 # Typed-value stores (codec wrappers)
 # ---------------------------------------------------------------------------
 
+def typed_store(decode: Callable, encode: Callable, *, base: type = ContainerStore):
+    """A ``base`` (default ``ContainerStore``) class with values ``decode(bytes)`` / ``encode(obj) -> bytes``.
+
+    Unlike a bare ``wrap_kvs(ContainerStore, obj_of_data=..., data_of_obj=...)``, the trailing-slash
+    sub-store convention keeps working: ``store['2026/']`` comes back as a sub-store of the
+    *same typed class*, instead of being fed to ``decode`` (i2mint/azuredol#4).
+    """
+
+    def obj_of_data(x):
+        if isinstance(x, ContainerReader):  # a trailing-slash sub-store, not blob bytes
+            return cls(**x._init_kwargs())
+        return decode(x)
+
+    cls = wrap_kvs(base, obj_of_data=obj_of_data, data_of_obj=encode)
+    return cls
+
+
+def typed_codec(decode: Callable, encode: Callable) -> Callable:
+    """``typed_store`` as a class decorator: the shape ``azure_store(value_codec=...)`` takes.
+
+    >>> import json
+    >>> codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())
+    >>> callable(codec)
+    True
+    """
+    return lambda base: typed_store(decode, encode, base=base)
+
+
 # Note: do NOT use `bytes.decode` directly as `obj_of_data` — known dol issue (#9).
-AzureTextStore = wrap_kvs(
-    ContainerStore,
-    obj_of_data=lambda b: b.decode(),
-    data_of_obj=lambda s: s.encode(),
-)
+AzureTextStore = typed_store(lambda b: b.decode(), lambda s: s.encode())
 """Text-typed values (str ↔ bytes via UTF-8)."""
 
 
@@ -33,21 +57,13 @@ def _json_codec():
     """Lazy json import so this module is import-light."""
     import json
 
-    return wrap_kvs(
-        ContainerStore,
-        obj_of_data=lambda b: json.loads(b),
-        data_of_obj=lambda obj: json.dumps(obj).encode(),
-    )
+    return typed_store(lambda b: json.loads(b), lambda obj: json.dumps(obj).encode())
 
 
 def _pickle_codec():
     import pickle
 
-    return wrap_kvs(
-        ContainerStore,
-        obj_of_data=lambda b: pickle.loads(b),
-        data_of_obj=lambda obj: pickle.dumps(obj),
-    )
+    return typed_store(lambda b: pickle.loads(b), lambda obj: pickle.dumps(obj))
 
 
 # Built lazily so importing azuredol.recipes doesn't import json/pickle eagerly.
@@ -105,7 +121,8 @@ def azure_store(
         create_container_if_missing: Create the container on first use if absent.
         blob_type: Default blob type for writes.
         value_codec: A decorator that, given a class, returns a wrapped class. Typically
-            a partially-applied ``dol.wrap_kvs(...)``. When None (default), bytes pass
+            ``typed_codec(decode, encode)``. A bare ``dol.wrap_kvs(...)`` breaks the
+            trailing-slash sub-store (i2mint/azuredol#4). When None (default), bytes pass
             through.
 
     Returns:
