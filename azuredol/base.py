@@ -208,7 +208,10 @@ class ContainerReader(ContainerCollection):
     """Adds ``__getitem__`` (returns bytes) over ``ContainerCollection``.
 
     The trailing-slash sub-store convention lives here: ``store['sub/']`` returns a new
-    ``ContainerReader`` with extended prefix and zero round-trips.
+    ``ContainerReader`` with extended prefix and zero round-trips. This works on a bare store
+    and on typed-store classes, but not through every wrapper stack (a ``dol`` wrapper placed
+    on an instance is not carried into the sub-store); :func:`azuredol.substore` is the portable
+    form and should be preferred (i2mint/azuredol#9).
     """
 
     @translate_azure_errors(key_arg=1, not_found_cls=BlobNotFoundError)
