@@ -10,7 +10,7 @@ To get the part of a store under a prefix, prefer `azuredol.substore(store, 'sub
 ```python
 from azuredol import substore
 
-sub = substore(store, '2026/')
+sub = substore(store, "2026/")
 ```
 
 `store['sub/']` (a key ending in `/`) also works and is kept, but only on a bare store and on typed-store classes (`typed_store`, `AzureJsonStore`). It does not work through every wrapper stack: a dol wrapper placed on top of an *instance* is not carried into `store['sub/']`.
