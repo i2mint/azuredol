@@ -50,7 +50,7 @@ This is the “simple things simple” entry point. For complex configurations c
 * **Parameters:**
   * **container** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Container name.
   * **prefix** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Blob-name prefix to scope all keys.
-  * **connection** (`Union`[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
     accepts) to reuse a service client. Mutually exclusive with the explicit
     `credential` / `connection_string` / `account_*` kwargs.
   * **credential** ([`Any`](https://docs.python.org/3/library/typing.html#typing.Any)) – Forwarded to
@@ -74,15 +74,15 @@ This is the “simple things simple” entry point. For complex configurations c
 
 `typed_store` as a class decorator: the shape `azure_store(value_codec=...)` takes.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
-
 ```pycon
 >>> import json
 >>> codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())
 >>> callable(codec)
 True
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
 
 ### azuredol.recipes.typed_store(decode, encode, \*, base=<class 'azuredol.base.ContainerStore'>)
 

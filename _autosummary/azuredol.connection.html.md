@@ -20,7 +20,7 @@ See `misc/docs/architecture.md` Layer A and `misc/docs/design_decisions.md` §6.
 | [`AzureConnection`](#azuredol.connection.AzureConnection)([credential, ...])   | Holds a resolved credential and a lazy `BlobServiceClient`.   |
 |---------------------------------------------------------------------------------------|---------------------------------------------------------------|
 
-### *class* azuredol.connection.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=<factory>)
+### *class* azuredol.connection.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -30,7 +30,7 @@ This is the dependency-injection seam for the whole package. Tests construct one
 pointing at Azurite without touching any store class.
 
 * **Parameters:**
-  * **credential** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
+  * **credential** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
   * **connection_string** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – full connection string (overrides `credential`).
   * **account_url** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – storage account URL (with or without credential).
   * **account_key** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – shared-key for the account.

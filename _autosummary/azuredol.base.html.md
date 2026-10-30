@@ -57,9 +57,9 @@ properties, conditional writes, leases, copy, append, SAS URL generation,
 streaming downloads.
 
 * **Parameters:**
-  * **container** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
+  * **container** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
   * **blob** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The blob name (relative to the container root; full path including ‘/’).
-  * **connection** (`Union`[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
     resolved via `AzureConnection.from_anything`.
 
 #### acquire_lease(lease_duration=-1)
@@ -146,7 +146,10 @@ Bases: [`ContainerCollection`](#azuredol.base.ContainerCollection)
 Adds `__getitem__` (returns bytes) over `ContainerCollection`.
 
 The trailing-slash sub-store convention lives here: `store['sub/']` returns a new
-`ContainerReader` with extended prefix and zero round-trips.
+`ContainerReader` with extended prefix and zero round-trips. This works on a bare store
+and on typed-store classes, but not through every wrapper stack (a `dol` wrapper placed
+on an instance is not carried into the sub-store); [`azuredol.substore()`](azuredol.html.md#azuredol.substore) is the portable
+form and should be preferred (i2mint/azuredol#9).
 
 ### *class* azuredol.base.ContainerStore(container, , prefix='', connection=None, create_container_if_missing=False, blob_type=BlobType.BLOCKBLOB, upload_kwargs=None, download_kwargs=None)
 

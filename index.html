@@ -7,6 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d88b86f9" />
     <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_autodoc_typehints.css?v=057ac668" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,7 +89,10 @@ data-aria-dark="Switch to auto color mode">
     <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
       <i class="i-lucide close"></i>
     </button>
-    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#sub-stores-use-substore">Sub-stores: use <code class="docutils literal notranslate"><span class="pre">substore()</span></code></a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
   <main class="sy-main w-full max-sm:max-w-full print:pt-6">
@@ -118,12 +122,22 @@ data-aria-dark="Switch to auto color mode">
 <h1>azuredol<a class="headerlink" href="#azuredol" title="Link to this heading">#</a></h1>
 <p>Azure Storage Data Object Layer</p>
 <p>To install:	<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">azuredol</span></code></p>
+<section id="sub-stores-use-substore">
+<h2>Sub-stores: use <code class="docutils literal notranslate"><span class="pre">substore()</span></code><a class="headerlink" href="#sub-stores-use-substore" title="Link to this heading">#</a></h2>
+<p>To get the part of a store under a prefix, prefer <code class="docutils literal notranslate"><span class="pre">azuredol.substore(store,</span> <span class="pre">'sub/')</span></code>: it is the portable form and returns a sub-store through any wrapper stack on <code class="docutils literal notranslate"><span class="pre">store</span></code> (key codecs, value codecs, scopes), so <code class="docutils literal notranslate"><span class="pre">substore(store,</span> <span class="pre">'sub/')[k]</span></code> is always <code class="docutils literal notranslate"><span class="pre">store['sub/'</span> <span class="pre">+</span> <span class="pre">k]</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">azuredol</span><span class="w"> </span><span class="kn">import</span> <span class="n">substore</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">sub</span> <span class="o">=</span> <span class="n">substore</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="s1">'2026/'</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">store['sub/']</span></code> (a key ending in <code class="docutils literal notranslate"><span class="pre">/</span></code>) also works and is kept, but only on a bare store and on typed-store classes (<code class="docutils literal notranslate"><span class="pre">typed_store</span></code>, <code class="docutils literal notranslate"><span class="pre">AzureJsonStore</span></code>). It does not work through every wrapper stack: a dol wrapper placed on top of an <em>instance</em> is not carried into <code class="docutils literal notranslate"><span class="pre">store['sub/']</span></code>.</p>
 <p class="epythet-aggregates">This documentation as a single file: <a href="azuredol.md">azuredol.md</a> (Markdown, for agents).</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
+</section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 11:10 UTC from <a href="https://github.com/i2mint/azuredol/commit/30080045fe7551de44e8c4c058652ff1ff003bf9">3008004</a> (master) · azuredol 0.1.16 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-30 07:53 UTC from <a href="https://github.com/i2mint/azuredol/commit/5dd2358d588e9baf2ab7ab17aa26d47134486316">5dd2358</a> (master) · azuredol 0.1.17 · <a href="about-this-build.html">about this build</a></p>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
@@ -158,7 +172,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="_static/documentation_options.js?v=d50bcae4"></script>
+      <script src="_static/documentation_options.js?v=71734efd"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>

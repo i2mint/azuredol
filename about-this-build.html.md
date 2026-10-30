@@ -2,18 +2,18 @@
 
 # About this build
 
-This documentation was built on **2026-10-13 11:10 UTC** from commit <a href="https://github.com/i2mint/azuredol/commit/30080045fe7551de44e8c4c058652ff1ff003bf9"><code>3008004</code></a> on branch <code>master</code>, for **azuredol 0.1.16** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-30 07:53 UTC** from commit <a href="https://github.com/i2mint/azuredol/commit/5dd2358d588e9baf2ab7ab17aa26d47134486316"><code>5dd2358</code></a> on branch <code>master</code>, for **azuredol 0.1.17** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.16) is behind the latest release on PyPI (0.1.17): `pip install azuredol` gives newer code than these docs describe.
+- The documented version (0.1.17) is behind the latest release on PyPI (0.1.18): `pip install azuredol` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                        |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/azuredol/commit/30080045fe7551de44e8c4c058652ff1ff003bf9"><code>30080045fe7551de44e8c4c058652ff1ff003bf9</code></a> |
+| Commit              | <a href="https://github.com/i2mint/azuredol/commit/5dd2358d588e9baf2ab7ab17aa26d47134486316"><code>5dd2358d588e9baf2ab7ab17aa26d47134486316</code></a> |
 | Branch              | <code>master</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                   |
 | Working tree        | clean                                                                                                                                                  |
@@ -24,16 +24,16 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/azuredol</code>                                                               |
-| Run          | <a href="https://github.com/i2mint/azuredol/actions/runs/38388187813">38388187813</a>      |
+| Run          | <a href="https://github.com/i2mint/azuredol/actions/runs/41022754540">41022754540</a>      |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>30080045fe7551de44e8c4c058652ff1ff003bf9</code> (in the history of the built commit) |
+| Event commit | <code>5dd2358d588e9baf2ab7ab17aa26d47134486316</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.15  |
-| Sphinx   | 9.1.0   |
+| epythet  | 0.2.22  |
+| Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
 
@@ -51,14 +51,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/azuredol/0.1.17/">0.1.17</a>, newer than the documented version (0.1.16).
+Latest release: <a href="https://pypi.org/project/azuredol/0.1.18/">0.1.18</a>, newer than the documented version (0.1.17).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/azuredol && cd azuredol
-git checkout 30080045fe7551de44e8c4c058652ff1ff003bf9
-pip install "epythet==0.2.15"
+git checkout 5dd2358d588e9baf2ab7ab17aa26d47134486316
+pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

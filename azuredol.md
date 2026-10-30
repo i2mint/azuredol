@@ -1,4 +1,4 @@
-> built 2026-10-13 11:10 UTC from 3008004 (master) · azuredol 0.1.16. Details: build_info.json
+> built 2026-10-30 07:53 UTC from 5dd2358 (master) · azuredol 0.1.17. Details: build_info.json
 
 # index.html.md
 
@@ -9,6 +9,18 @@
 Azure Storage Data Object Layer
 
 To install:	`pip install azuredol`
+
+## Sub-stores: use `substore()`
+
+To get the part of a store under a prefix, prefer `azuredol.substore(store, 'sub/')`: it is the portable form and returns a sub-store through any wrapper stack on `store` (key codecs, value codecs, scopes), so `substore(store, 'sub/')[k]` is always `store['sub/' + k]`.
+
+```python
+from azuredol import substore
+
+sub = substore(store, '2026/')
+```
+
+`store['sub/']` (a key ending in `/`) also works and is kept, but only on a bare store and on typed-store classes (`typed_store`, `AzureJsonStore`). It does not work through every wrapper stack: a dol wrapper placed on top of an *instance* is not carried into `store['sub/']`.
 
 <p class="epythet-aggregates">This documentation as a single file: <a href="azuredol.md">azuredol.md</a> (Markdown, for agents).</p>
 
@@ -74,9 +86,9 @@ properties, conditional writes, leases, copy, append, SAS URL generation,
 streaming downloads.
 
 * **Parameters:**
-  * **container** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
+  * **container** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
   * **blob** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The blob name (relative to the container root; full path including ‘/’).
-  * **connection** (`Union`[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
     resolved via `AzureConnection.from_anything`.
 
 #### acquire_lease(lease_duration=-1)
@@ -163,7 +175,10 @@ Bases: [`ContainerCollection`](_autosummary/azuredol.base.html.md#azuredol.base.
 Adds `__getitem__` (returns bytes) over `ContainerCollection`.
 
 The trailing-slash sub-store convention lives here: `store['sub/']` returns a new
-`ContainerReader` with extended prefix and zero round-trips.
+`ContainerReader` with extended prefix and zero round-trips. This works on a bare store
+and on typed-store classes, but not through every wrapper stack (a `dol` wrapper placed
+on an instance is not carried into the sub-store); [`azuredol.substore()`](_autosummary/azuredol.html.md#azuredol.substore) is the portable
+form and should be preferred (i2mint/azuredol#9).
 
 ### *class* azuredol.base.ContainerStore(container, , prefix='', connection=None, create_container_if_missing=False, blob_type=BlobType.BLOCKBLOB, upload_kwargs=None, download_kwargs=None)
 
@@ -218,7 +233,7 @@ See `misc/docs/architecture.md` Layer A and `misc/docs/design_decisions.md` §6.
 | [`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection)([credential, ...])   | Holds a resolved credential and a lazy `BlobServiceClient`.   |
 |---------------------------------------------------------------------------------------|---------------------------------------------------------------|
 
-### *class* azuredol.connection.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=<factory>)
+### *class* azuredol.connection.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -228,7 +243,7 @@ This is the dependency-injection seam for the whole package. Tests construct one
 pointing at Azurite without touching any store class.
 
 * **Parameters:**
-  * **credential** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
+  * **credential** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
   * **connection_string** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – full connection string (overrides `credential`).
   * **account_url** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – storage account URL (with or without credential).
   * **account_key** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – shared-key for the account.
@@ -494,7 +509,7 @@ Mapping (in which case it is treated as an initial bulk-load).
 `__delitem__` refuses non-empty containers — call `azuredol.ops.delete_container(store, name, force=True)`
 to acknowledge a cascading delete. See `misc/docs/design_decisions.md` §12.
 
-### *class* azuredol.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=<factory>)
+### *class* azuredol.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -504,7 +519,7 @@ This is the dependency-injection seam for the whole package. Tests construct one
 pointing at Azurite without touching any store class.
 
 * **Parameters:**
-  * **credential** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
+  * **credential** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
   * **connection_string** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – full connection string (overrides `credential`).
   * **account_url** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – storage account URL (with or without credential).
   * **account_key** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – shared-key for the account.
@@ -570,9 +585,9 @@ properties, conditional writes, leases, copy, append, SAS URL generation,
 streaming downloads.
 
 * **Parameters:**
-  * **container** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
+  * **container** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
   * **blob** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The blob name (relative to the container root; full path including ‘/’).
-  * **connection** (`Union`[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
     resolved via `AzureConnection.from_anything`.
 
 #### acquire_lease(lease_duration=-1)
@@ -686,7 +701,10 @@ Bases: [`ContainerCollection`](_autosummary/azuredol.base.html.md#azuredol.base.
 Adds `__getitem__` (returns bytes) over `ContainerCollection`.
 
 The trailing-slash sub-store convention lives here: `store['sub/']` returns a new
-`ContainerReader` with extended prefix and zero round-trips.
+`ContainerReader` with extended prefix and zero round-trips. This works on a bare store
+and on typed-store classes, but not through every wrapper stack (a `dol` wrapper placed
+on an instance is not carried into the sub-store); [`azuredol.substore()`](_autosummary/azuredol.html.md#azuredol.substore) is the portable
+form and should be preferred (i2mint/azuredol#9).
 
 ### *class* azuredol.ContainerStore(container, , prefix='', connection=None, create_container_if_missing=False, blob_type=BlobType.BLOCKBLOB, upload_kwargs=None, download_kwargs=None)
 
@@ -745,7 +763,7 @@ This is the “simple things simple” entry point. For complex configurations c
 * **Parameters:**
   * **container** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Container name.
   * **prefix** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Blob-name prefix to scope all keys.
-  * **connection** (`Union`[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
     accepts) to reuse a service client. Mutually exclusive with the explicit
     `credential` / `connection_string` / `account_*` kwargs.
   * **credential** ([`Any`](https://docs.python.org/3/library/typing.html#typing.Any)) – Forwarded to
@@ -803,6 +821,9 @@ Cascade (first hit wins):
 
 The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.
 
+This is the portable form. `store['a/']` is kept and works on bare stores and typed-store
+classes, but not through every wrapper stack; prefer `substore` everywhere else.
+
 `substore(store, 'a/')[k]` is `store['a/' + k]` for every wrapper stack on `store` (up to the key limits below).
 On a bare `ContainerStore` it is the cheap, server-scoped `store['a/']` (listing only
 `a/`’s blobs). On anything wrapped (a `dol` key/value codec or scope, including the
@@ -845,15 +866,15 @@ untouched — they are *never* swallowed as “key absent”. See
 
 `typed_store` as a class decorator: the shape `azure_store(value_codec=...)` takes.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
-
 ```pycon
 >>> import json
 >>> codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())
 >>> callable(codec)
 True
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
 
 ### azuredol.typed_store(decode, encode, \*, base=<class 'azuredol.base.ContainerStore'>)
 
@@ -940,6 +961,9 @@ The deletion is `del store[name]` on the caller’s own store, so a key codec ma
 
 The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.
 
+This is the portable form. `store['a/']` is kept and works on bare stores and typed-store
+classes, but not through every wrapper stack; prefer `substore` everywhere else.
+
 `substore(store, 'a/')[k]` is `store['a/' + k]` for every wrapper stack on `store` (up to the key limits below).
 On a bare `ContainerStore` it is the cheap, server-scoped `store['a/']` (listing only
 `a/`’s blobs). On anything wrapped (a `dol` key/value codec or scope, including the
@@ -1025,7 +1049,7 @@ This is the “simple things simple” entry point. For complex configurations c
 * **Parameters:**
   * **container** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Container name.
   * **prefix** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Blob-name prefix to scope all keys.
-  * **connection** (`Union`[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](_autosummary/azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
     accepts) to reuse a service client. Mutually exclusive with the explicit
     `credential` / `connection_string` / `account_*` kwargs.
   * **credential** ([`Any`](https://docs.python.org/3/library/typing.html#typing.Any)) – Forwarded to
@@ -1049,15 +1073,15 @@ This is the “simple things simple” entry point. For complex configurations c
 
 `typed_store` as a class decorator: the shape `azure_store(value_codec=...)` takes.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
-
 ```pycon
 >>> import json
 >>> codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())
 >>> callable(codec)
 True
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
 
 ### azuredol.recipes.typed_store(decode, encode, \*, base=<class 'azuredol.base.ContainerStore'>)
 
@@ -1150,18 +1174,18 @@ Skips the test session if Azurite cannot be started.
 
 # About this build
 
-This documentation was built on **2026-10-13 11:10 UTC** from commit <a href="https://github.com/i2mint/azuredol/commit/30080045fe7551de44e8c4c058652ff1ff003bf9"><code>3008004</code></a> on branch <code>master</code>, for **azuredol 0.1.16** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-30 07:53 UTC** from commit <a href="https://github.com/i2mint/azuredol/commit/5dd2358d588e9baf2ab7ab17aa26d47134486316"><code>5dd2358</code></a> on branch <code>master</code>, for **azuredol 0.1.17** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.16) is behind the latest release on PyPI (0.1.17): `pip install azuredol` gives newer code than these docs describe.
+- The documented version (0.1.17) is behind the latest release on PyPI (0.1.18): `pip install azuredol` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                        |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/azuredol/commit/30080045fe7551de44e8c4c058652ff1ff003bf9"><code>30080045fe7551de44e8c4c058652ff1ff003bf9</code></a> |
+| Commit              | <a href="https://github.com/i2mint/azuredol/commit/5dd2358d588e9baf2ab7ab17aa26d47134486316"><code>5dd2358d588e9baf2ab7ab17aa26d47134486316</code></a> |
 | Branch              | <code>master</code>                                                                                                                                    |
 | Tags at this commit | none                                                                                                                                                   |
 | Working tree        | clean                                                                                                                                                  |
@@ -1172,16 +1196,16 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/azuredol</code>                                                               |
-| Run          | <a href="https://github.com/i2mint/azuredol/actions/runs/38388187813">38388187813</a>      |
+| Run          | <a href="https://github.com/i2mint/azuredol/actions/runs/41022754540">41022754540</a>      |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>30080045fe7551de44e8c4c058652ff1ff003bf9</code> (in the history of the built commit) |
+| Event commit | <code>5dd2358d588e9baf2ab7ab17aa26d47134486316</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.15  |
-| Sphinx   | 9.1.0   |
+| epythet  | 0.2.22  |
+| Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
 
@@ -1199,14 +1223,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/azuredol/0.1.17/">0.1.17</a>, newer than the documented version (0.1.16).
+Latest release: <a href="https://pypi.org/project/azuredol/0.1.18/">0.1.18</a>, newer than the documented version (0.1.17).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/azuredol && cd azuredol
-git checkout 30080045fe7551de44e8c4c058652ff1ff003bf9
-pip install "epythet==0.2.15"
+git checkout 5dd2358d588e9baf2ab7ab17aa26d47134486316
+pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

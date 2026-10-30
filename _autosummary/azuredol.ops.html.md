@@ -51,6 +51,9 @@ The deletion is `del store[name]` on the caller’s own store, so a key codec ma
 
 The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.
 
+This is the portable form. `store['a/']` is kept and works on bare stores and typed-store
+classes, but not through every wrapper stack; prefer `substore` everywhere else.
+
 `substore(store, 'a/')[k]` is `store['a/' + k]` for every wrapper stack on `store` (up to the key limits below).
 On a bare `ContainerStore` it is the cheap, server-scoped `store['a/']` (listing only
 `a/`’s blobs). On anything wrapped (a `dol` key/value codec or scope, including the

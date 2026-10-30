@@ -86,7 +86,7 @@ Mapping (in which case it is treated as an initial bulk-load).
 `__delitem__` refuses non-empty containers — call `azuredol.ops.delete_container(store, name, force=True)`
 to acknowledge a cascading delete. See `misc/docs/design_decisions.md` §12.
 
-### *class* azuredol.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=<factory>)
+### *class* azuredol.AzureConnection(credential=None, connection_string=None, account_url=None, account_key=None, client_kwargs=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -96,7 +96,7 @@ This is the dependency-injection seam for the whole package. Tests construct one
 pointing at Azurite without touching any store class.
 
 * **Parameters:**
-  * **credential** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
+  * **credential** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – explicit credential object, key string, or SAS string.
   * **connection_string** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – full connection string (overrides `credential`).
   * **account_url** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – storage account URL (with or without credential).
   * **account_key** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – shared-key for the account.
@@ -162,9 +162,9 @@ properties, conditional writes, leases, copy, append, SAS URL generation,
 streaming downloads.
 
 * **Parameters:**
-  * **container** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
+  * **container** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), `ContainerClient`]) – An existing `ContainerClient` or a container name string.
   * **blob** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The blob name (relative to the container root; full path including ‘/’).
-  * **connection** (`Union`[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), `BlobServiceClient`, [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Ignored if `container` is a `ContainerClient`. Otherwise
     resolved via `AzureConnection.from_anything`.
 
 #### acquire_lease(lease_duration=-1)
@@ -278,7 +278,10 @@ Bases: [`ContainerCollection`](azuredol.base.html.md#azuredol.base.ContainerColl
 Adds `__getitem__` (returns bytes) over `ContainerCollection`.
 
 The trailing-slash sub-store convention lives here: `store['sub/']` returns a new
-`ContainerReader` with extended prefix and zero round-trips.
+`ContainerReader` with extended prefix and zero round-trips. This works on a bare store
+and on typed-store classes, but not through every wrapper stack (a `dol` wrapper placed
+on an instance is not carried into the sub-store); [`azuredol.substore()`](#azuredol.substore) is the portable
+form and should be preferred (i2mint/azuredol#9).
 
 ### *class* azuredol.ContainerStore(container, , prefix='', connection=None, create_container_if_missing=False, blob_type=BlobType.BLOCKBLOB, upload_kwargs=None, download_kwargs=None)
 
@@ -337,7 +340,7 @@ This is the “simple things simple” entry point. For complex configurations c
 * **Parameters:**
   * **container** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Container name.
   * **prefix** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Blob-name prefix to scope all keys.
-  * **connection** (`Union`[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
+  * **connection** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`AzureConnection`](azuredol.connection.html.md#azuredol.connection.AzureConnection), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – An `AzureConnection` (or anything `AzureConnection.from_anything`
     accepts) to reuse a service client. Mutually exclusive with the explicit
     `credential` / `connection_string` / `account_*` kwargs.
   * **credential** ([`Any`](https://docs.python.org/3/library/typing.html#typing.Any)) – Forwarded to
@@ -395,6 +398,9 @@ Cascade (first hit wins):
 
 The sub-store of `store` under `key` (a key ending in `'/'`), as the caller sees it.
 
+This is the portable form. `store['a/']` is kept and works on bare stores and typed-store
+classes, but not through every wrapper stack; prefer `substore` everywhere else.
+
 `substore(store, 'a/')[k]` is `store['a/' + k]` for every wrapper stack on `store` (up to the key limits below).
 On a bare `ContainerStore` it is the cheap, server-scoped `store['a/']` (listing only
 `a/`’s blobs). On anything wrapped (a `dol` key/value codec or scope, including the
@@ -437,15 +443,15 @@ untouched — they are *never* swallowed as “key absent”. See
 
 `typed_store` as a class decorator: the shape `azure_store(value_codec=...)` takes.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
-
 ```pycon
 >>> import json
 >>> codec = typed_codec(json.loads, lambda o: json.dumps(o).encode())
 >>> callable(codec)
 True
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)
 
 ### azuredol.typed_store(decode, encode, \*, base=<class 'azuredol.base.ContainerStore'>)
 

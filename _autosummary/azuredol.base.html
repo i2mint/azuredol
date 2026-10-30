@@ -7,6 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d88b86f9" />
     <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -229,9 +230,9 @@ streaming downloads.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>container</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ContainerClient</span></code>]</span>) – An existing <code class="docutils literal notranslate"><span class="pre">ContainerClient</span></code> or a container name string.</p></li>
+<li><p><strong>container</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ContainerClient</span></code>]</span>) – An existing <code class="docutils literal notranslate"><span class="pre">ContainerClient</span></code> or a container name string.</p></li>
 <li><p><strong>blob</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The blob name (relative to the container root; full path including ‘/’).</p></li>
-<li><p><strong>connection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="azuredol.connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AzureConnection</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BlobServiceClient</span></code>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Ignored if <code class="docutils literal notranslate"><span class="pre">container</span></code> is a <code class="docutils literal notranslate"><span class="pre">ContainerClient</span></code>. Otherwise
+<li><p><strong>connection</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference internal" href="azuredol.connection.html#azuredol.connection.AzureConnection" title="azuredol.connection.AzureConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AzureConnection</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BlobServiceClient</span></code>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – Ignored if <code class="docutils literal notranslate"><span class="pre">container</span></code> is a <code class="docutils literal notranslate"><span class="pre">ContainerClient</span></code>. Otherwise
 resolved via <code class="docutils literal notranslate"><span class="pre">AzureConnection.from_anything</span></code>.</p></li>
 </ul>
 </dd>
@@ -250,7 +251,7 @@ resolved via <code class="docutils literal notranslate"><span class="pre">AzureC
 <dd><p>Append bytes to an append-blob (creating it if absent).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -269,7 +270,7 @@ resolved via <code class="docutils literal notranslate"><span class="pre">AzureC
 <dd><p>Strict-create variant of <code class="docutils literal notranslate"><span class="pre">write</span></code>; raises <code class="docutils literal notranslate"><span class="pre">BlobAlreadyExistsError</span></code> on conflict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -319,7 +320,7 @@ URL with read permission is generated. Otherwise the plain blob URL is returned
 <dd><p>Upload data; default overwrite=True for <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> symmetry.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -359,7 +360,10 @@ the caller’s (possibly wrapped) store use <code class="docutils literal notran
 <dd><p>Bases: <a class="reference internal" href="#azuredol.base.ContainerCollection" title="azuredol.base.ContainerCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContainerCollection</span></code></a></p>
 <p>Adds <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> (returns bytes) over <code class="docutils literal notranslate"><span class="pre">ContainerCollection</span></code>.</p>
 <p>The trailing-slash sub-store convention lives here: <code class="docutils literal notranslate"><span class="pre">store['sub/']</span></code> returns a new
-<code class="docutils literal notranslate"><span class="pre">ContainerReader</span></code> with extended prefix and zero round-trips.</p>
+<code class="docutils literal notranslate"><span class="pre">ContainerReader</span></code> with extended prefix and zero round-trips. This works on a bare store
+and on typed-store classes, but not through every wrapper stack (a <code class="docutils literal notranslate"><span class="pre">dol</span></code> wrapper placed
+on an instance is not carried into the sub-store); <a class="reference internal" href="azuredol.html#azuredol.substore" title="azuredol.substore"><code class="xref py py-func docutils literal notranslate"><span class="pre">azuredol.substore()</span></code></a> is the portable
+form and should be preferred (i2mint/azuredol#9).</p>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
@@ -433,7 +437,7 @@ the caller’s (possibly wrapped) store use <code class="docutils literal notran
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=d50bcae4"></script>
+      <script src="../_static/documentation_options.js?v=71734efd"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
