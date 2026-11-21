@@ -24,7 +24,7 @@ from azuredol.connection import AzureConnection
 def typed_store(decode: Callable, encode: Callable, *, base: type = ContainerStore):
     """A ``base`` (default ``ContainerStore``) class with values ``decode(bytes)`` / ``encode(obj) -> bytes``.
 
-    Unlike a bare ``wrap_kvs(ContainerStore, obj_of_data=..., data_of_obj=...)``, the trailing-slash
+    Unlike a bare ``wrap_kvs(ContainerStore, value_decoder=..., value_encoder=...)``, the trailing-slash
     sub-store convention keeps working: ``store['2026/']`` comes back as a sub-store of the
     *same typed class*, instead of being fed to ``decode`` (i2mint/azuredol#4).
     """
@@ -34,7 +34,7 @@ def typed_store(decode: Callable, encode: Callable, *, base: type = ContainerSto
             return cls(**x._init_kwargs())
         return decode(x)
 
-    cls = wrap_kvs(base, obj_of_data=obj_of_data, data_of_obj=encode)
+    cls = wrap_kvs(base, value_decoder=obj_of_data, value_encoder=encode)
     return cls
 
 
