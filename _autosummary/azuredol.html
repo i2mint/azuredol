@@ -794,7 +794,7 @@ method’s signature. Used to populate <code class="docutils literal notranslate
 <dt class="sig sig-object py" id="azuredol.typed_store">
 <span class="sig-prename descclassname"><span class="pre">azuredol.</span></span><span class="sig-name descname"><span class="pre">typed_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'azuredol.base.ContainerStore'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/azuredol/recipes.html#typed_store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azuredol.typed_store" title="Link to this definition">#</a></dt>
 <dd><p>A <code class="docutils literal notranslate"><span class="pre">base</span></code> (default <code class="docutils literal notranslate"><span class="pre">ContainerStore</span></code>) class with values <code class="docutils literal notranslate"><span class="pre">decode(bytes)</span></code> / <code class="docutils literal notranslate"><span class="pre">encode(obj)</span> <span class="pre">-&gt;</span> <span class="pre">bytes</span></code>.</p>
-<p>Unlike a bare <code class="docutils literal notranslate"><span class="pre">wrap_kvs(ContainerStore,</span> <span class="pre">obj_of_data=...,</span> <span class="pre">data_of_obj=...)</span></code>, the trailing-slash
+<p>Unlike a bare <code class="docutils literal notranslate"><span class="pre">wrap_kvs(ContainerStore,</span> <span class="pre">value_decoder=...,</span> <span class="pre">value_encoder=...)</span></code>, the trailing-slash
 sub-store convention keeps working: <code class="docutils literal notranslate"><span class="pre">store['2026/']</span></code> comes back as a sub-store of the
 <em>same typed class</em>, instead of being fed to <code class="docutils literal notranslate"><span class="pre">decode</span></code> (i2mint/azuredol#4).</p>
 <dl class="field-list simple">
@@ -884,7 +884,7 @@ is included (a codec that is not a pure prefix, e.g. a suffix, raises <code clas
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=71734efd"></script>
+      <script src="../_static/documentation_options.js?v=9969ed3f"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

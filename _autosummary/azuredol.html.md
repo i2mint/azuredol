@@ -457,7 +457,7 @@ True
 
 A `base` (default `ContainerStore`) class with values `decode(bytes)` / `encode(obj) -> bytes`.
 
-Unlike a bare `wrap_kvs(ContainerStore, obj_of_data=..., data_of_obj=...)`, the trailing-slash
+Unlike a bare `wrap_kvs(ContainerStore, value_decoder=..., value_encoder=...)`, the trailing-slash
 sub-store convention keeps working: `store['2026/']` comes back as a sub-store of the
 *same typed class*, instead of being fed to `decode` (i2mint/azuredol#4).
 
